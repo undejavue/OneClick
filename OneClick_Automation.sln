@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OneCLick_Analyser", "ST_Analizer\OneCLick_Analyser.csproj", "{B93FEF7E-71E9-4889-8E4A-D03DB10E7DB3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OneCLick_Analyzer", "ST_Analizer\OneCLick_Analyzer.csproj", "{B93FEF7E-71E9-4889-8E4A-D03DB10E7DB3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassLibrary", "ClassLibrary\ClassLibrary.csproj", "{AB8EB02F-5FA4-48FF-9EA5-25B37111598C}"
 EndProject
