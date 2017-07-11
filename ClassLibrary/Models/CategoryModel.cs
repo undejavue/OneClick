@@ -22,7 +22,7 @@ namespace ClassLibrary.Models
         */
         public string FCname { get; set; }
 
-        public virtual DataBlockModel Db { get; set; }
+        public DataBlockModel Db { get; set; }
         //{
         //    get { return DB; }
         //    set
@@ -46,17 +46,20 @@ namespace ClassLibrary.Models
         /// <summary>
         /// Link to model mKeys, OneToMany
         /// </summary>
-        public virtual ObservableCollection<KeyModel> Keys { get; set; }
+        public ObservableCollection<KeyModel> Keys { get; set; }
 
         /// <summary>
         /// Link to model SymbolTableItemModel, OneToMany
         /// </summary>
         //[ForeignKey("S7itemId")]
-        public virtual ObservableCollection<SymbolTableItemModel> S7Items { get; set; }
+        public ObservableCollection<SymbolTableItemModel> S7Items { get; set; }
 
         public CategoryModel()
         {
             SelectedKey = null;
+            Db = new DataBlockModel();
+            S7Items = new ObservableCollection<SymbolTableItemModel>();
+            Keys = new ObservableCollection<KeyModel>();
         }
 
         public CategoryModel(int initId, string initName, string initDescription)
@@ -64,12 +67,16 @@ namespace ClassLibrary.Models
             Name = initName;
             Description = initDescription;
             SelectedKey = null;
+            Db = new DataBlockModel();
+            S7Items = new ObservableCollection<SymbolTableItemModel>();
+            Keys = new ObservableCollection<KeyModel>();
         }
 
 
         public void AddDb(DataBlockModel newDb)
         {
             Db = newDb;
+
         }
 
         public void AddCollection(List<SymbolTableItemModel> newList)

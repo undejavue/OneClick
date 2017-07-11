@@ -202,13 +202,14 @@ namespace ClassLibrary.Models
         /// <summary>
         /// Text of STL source code for signal
         /// </summary>
-        public virtual ObservableCollection <BaseEntityModel> PeripheryCode { get; set; }
+        public ObservableCollection <BaseEntityModel> PeripheryCode { get; set; }
 
-        public virtual CategoryModel CategoryModel { get; set; }
+        public CategoryModel CategoryModel { get; set; }
 
         public SymbolTableItemModel()
         {
-
+            PeripheryCode = new ObservableCollection<BaseEntityModel>();
+            CategoryModel = new CategoryModel();
         }
 
         /// Для каждого созданного элемента сразу задаются значения полей 
@@ -220,6 +221,9 @@ namespace ClassLibrary.Models
         {
             this.DbArrayName = dbArrayName;
             this.DbFullName = udtNumber;
+            PeripheryCode = new ObservableCollection<BaseEntityModel>();
+            CategoryModel = new CategoryModel();
+
         }
 
         public List<string> GetItemInOneRow()

@@ -41,6 +41,7 @@ namespace OneClickUI
             bgWorker.RunWorkerCompleted += BgWorkerRunWorkerCompleted;
             bgWorker.ProgressChanged += BgWorkerProgressChanged;
             bgWorker.WorkerReportsProgress = true;
+            bgWorker.WorkerSupportsCancellation = true;
 
             //txt_filename.DataContext = global_FileName;
             OneClickSetGlobals();
@@ -73,11 +74,11 @@ namespace OneClickUI
 
         private void BgWorkerProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            this.progressBar.Value = e.ProgressPercentage;
-            this.txt_result.AppendText("\r\n" + DateTime.Now.ToString("h:mm:ss") + ": " + e.UserState.ToString());
-            this.txt_result.ScrollToEnd();
+            this.ProgressBar.Value = e.ProgressPercentage;
+            this.TxtResult.AppendText("\r\n" + DateTime.Now.ToString("h:mm:ss") + ": " + e.UserState.ToString());
+            this.TxtResult.ScrollToEnd();
 
-            label_Process.Content = "Выполняется...";
+            LabelProcess.Content = "Выполняется...";
         }
 
         private void BgWorkerRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -85,21 +86,21 @@ namespace OneClickUI
             if (e.Cancelled)
             {
                 MessageBox.Show("Операция отменена", "S7 analyzer", MessageBoxButton.OK);
-                label_Process.Content = "Отменено!";
+                LabelProcess.Content = "Отменено!";
                 Print2Result("Операция отменена");
             }
             else
             {
                 var result = (BaseEntityModel)e.Result;
                 Print2Result(result.Description);
-                label_Process.Content = result.Name;
+                LabelProcess.Content = result.Name;
             }
 
-            progressBar.IsIndeterminate = false;
-            this.progressBar.Value = 100;
+            ProgressBar.IsIndeterminate = false;
+            this.ProgressBar.Value = 100;
 
-            btn_Cancel.IsEnabled = false;
-            btn_GenSource.IsEnabled = true;
+            BtnCancel.IsEnabled = false;
+            BtnGenSource.IsEnabled = true;
 
             exWorks.setVisible(true);
         }
@@ -114,8 +115,8 @@ namespace OneClickUI
 
             G.rootdir = "D:\\OneClickDB";
 
-            gridFileOperations.DataContext = G;
-            gridDBOperations.DataContext = G;
+            GridFileOperations.DataContext = G;
+            GridDbOperations.DataContext = G;
 
         }
 
@@ -131,11 +132,11 @@ namespace OneClickUI
 
             G.rootdir = exWorks.OpenExcel();
 
-            btn_TblAdapt.IsEnabled = true;
-            btn_Operations.IsEnabled = true;
-            btn_GenSource.IsEnabled = true;
-            btn_Save.IsEnabled = true;
-            btn_Close.IsEnabled = true;
+            BtnTblAdapt.IsEnabled = true;
+            BtnOperations.IsEnabled = true;
+            BtnGenSource.IsEnabled = true;
+            BtnSave.IsEnabled = true;
+            BtnClose.IsEnabled = true;
 
             G.filename = exWorks.fileName;
         }
@@ -148,7 +149,7 @@ namespace OneClickUI
             }
             else
             {
-                this.txt_result.AppendText("\r\n" + DateTime.Now.ToString("h:mm:ss") + ": " + args.message);
+                this.TxtResult.AppendText("\r\n" + DateTime.Now.ToString("h:mm:ss") + ": " + args.message);
             }
         }
 
@@ -164,7 +165,7 @@ namespace OneClickUI
                 arg.Description = "Анализ таблицы сигналов";
                 bgWorker.RunWorkerAsync(arg);
 
-                btn_Cancel.IsEnabled = true;
+                BtnCancel.IsEnabled = true;
                 exWorks.setVisible(G.isExcelVisible);
             }
             else
@@ -199,7 +200,7 @@ namespace OneClickUI
                 arg.Description = "Сортировка сигналов по таблицам категорий";
                 bgWorker.RunWorkerAsync(arg);
 
-                btn_Cancel.IsEnabled = true;
+                BtnCancel.IsEnabled = true;
                 exWorks.setVisible(G.isExcelVisible);
             }
             else
@@ -255,9 +256,9 @@ namespace OneClickUI
             //}
             //else
             //    MessageBox.Show("Уже идет выполнение фоновой операции");
-            label_Process.Content = "Выполняется...";
+            LabelProcess.Content = "Выполняется...";
             OneClickDbCreate();
-            label_Process.Content = "Готово";
+            LabelProcess.Content = "Готово";
         }
 
         //--- Открыть базу данных
@@ -280,14 +281,38 @@ namespace OneClickUI
             exWorks.excel_backupSheet("SymbolTable");
             bgWorker.ReportProgress(5, "Резервная копия таблицы создана");
 
+            if (bgWorker.CancellationPending)
+            {
+                e.Cancel = true;
+                return;
+            }
+
             var symbolTableModel = new SymbolTableModel(exWorks.generate_ArrayFromRange("SymbolTable", true));
             bgWorker.ReportProgress(30, "Таблица прочитана в память");
+
+            if (bgWorker.CancellationPending)
+            {
+                e.Cancel = true;
+                return;
+            }
 
             symbolTableModel.AnalyseAndSetTags();
             bgWorker.ReportProgress(60, "Анализ символьных имен выполнен");
 
+            if (bgWorker.CancellationPending)
+            {
+                e.Cancel = true;
+                return;
+            }
+
             symbolTableModel.SortTable();
             bgWorker.ReportProgress(70, "Сортировка выполнена");
+
+            if (bgWorker.CancellationPending)
+            {
+                e.Cancel = true;
+                return;
+            }
 
             var arr = symbolTableModel.GetSymbolsArray();
             exWorks.printArrayToSheet(arr, "SymbolTable");
@@ -316,9 +341,21 @@ namespace OneClickUI
 
                 foreach (var cat in categories)
                 {
-                    var list = new List<string>();
-                    foreach (BaseEntityModel k in cat.Keys)
+                    if (bgWorker.CancellationPending)
                     {
+                        e.Cancel = true;
+                        return;
+                    }
+
+                    var list = new List<string>();
+                    foreach (var k in cat.Keys)
+                    {
+                        if (bgWorker.CancellationPending)
+                        {
+                            e.Cancel = true;
+                            return;
+                        }
+
                         list.Add(k.Name);
                     }
                     cat.AddCollection(unsortedTableModel.ExtractListByKeys(list));
@@ -330,6 +367,11 @@ namespace OneClickUI
 
                 foreach (var category in categories)
                 {
+                    if (bgWorker.CancellationPending)
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
 
                     category.SortCollectionByCodename();
                     exWorks.printArrayToSheetTemplate(category.GetSymbolsArrayEx(), category.Name);
@@ -361,8 +403,15 @@ namespace OneClickUI
             bgWorker.ReportProgress(30, "Выгрузка листа блоков данных...");
             exWorks.printArrayToSheet(sources.PrintDBlistToArray(), "DB_list");
 
+            if (bgWorker.CancellationPending)
+            {
+                e.Cancel = true;
+                return;
+            }
+
             bgWorker.ReportProgress(40, "Старт генерации source-файлов...");
-            if ((G.sourcedir == null) | (G.sourcedir == "")) G.sourcedir = Environment.CurrentDirectory;
+            if ((G.sourcedir == null) | (G.sourcedir == ""))
+                G.sourcedir = Environment.CurrentDirectory;
             sources.SetPeripheryFields();
 
             sources.PrintAllSourcesToFiles(G.sourcedir);
@@ -525,8 +574,8 @@ namespace OneClickUI
         //----- Второстепенные и вспомогательные функции и операции
         public void Print2Result(string s)
         {
-            txt_result.AppendText("\r\n" + DateTime.Now.ToString("h:mm:ss") + ": " + s);
-            txt_result.ScrollToEnd();
+            TxtResult.AppendText("\r\n" + DateTime.Now.ToString("h:mm:ss") + ": " + s);
+            TxtResult.ScrollToEnd();
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
