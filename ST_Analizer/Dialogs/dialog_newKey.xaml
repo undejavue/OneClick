@@ -1,4 +1,4 @@
-﻿<Window x:Class="OneClick_Analyser.dialog_newKey"
+﻿<Window x:Class="OneClickUI.Dialogs.dialog_newKey"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="dialog_newKey" Height="300" Width="300">

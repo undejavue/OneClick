@@ -1,20 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using ClassLibrary.Models;
 
-using ClassLibrary;
-
-namespace OneClick_Analyser
+namespace OneClickUI.Dialogs
 {
     /// <summary>
     /// Логика взаимодействия для dialog_categories.xaml
@@ -22,9 +11,9 @@ namespace OneClick_Analyser
     public partial class dialog_categories : Window
     {
 
-        public ObservableCollection<mCategory> categories ;
-        private mCategory newItem;
-        private mBaseEntity newKey;
+        public ObservableCollection<CategoryModel> categories ;
+        private CategoryModel newItem;
+        private BaseEntityModel newKey;
 
         public dialog_categories()
         {
@@ -33,12 +22,12 @@ namespace OneClick_Analyser
 
         }
 
-        public dialog_categories(ObservableCollection<mCategory> setCategories)
+        public dialog_categories(ObservableCollection<CategoryModel> setCategories)
         {
             InitializeComponent();
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
-            this.categories = new ObservableCollection<mCategory>(setCategories);
+            this.categories = new ObservableCollection<CategoryModel>(setCategories);
             lst_Devices.ItemsSource = categories;
 
         }
@@ -54,112 +43,112 @@ namespace OneClick_Analyser
             if (categories.Count > 0)
                 categories.Clear();
 
-            mCategory cat = new mCategory(1, "A", "Датчики 4-20");
-            cat.DB.UDT_Number = "1";
-            cat.DB.UDT_Name = "SNS_UDT";
-            cat.DB.Symbol = "A";
-            cat.DB.ArrayName = "SNS";
+            CategoryModel cat = new CategoryModel(1, "A", "Датчики 4-20");
+            cat.Db.UdtNumber = "1";
+            cat.Db.UdtName = "SNS_UDT";
+            cat.Db.Symbol = "A";
+            cat.Db.ArrayName = "SNS";
             cat.FCname = "periphery_SNS";
-            cat.Keys.Add(new mKey { Name = "IW" });
+            cat.Keys.Add(new KeyModel { Name = "IW" });
             categories.Add(cat);
 
-            cat = new mCategory(3, "L", "Датчики уровня");
-            cat.DB.UDT_Number = "3";
-            cat.DB.UDT_Name = "SNL_UDT";
-            cat.DB.Symbol = "D";
-            cat.DB.ArrayName = "SNL";
+            cat = new CategoryModel(3, "L", "Датчики уровня");
+            cat.Db.UdtNumber = "3";
+            cat.Db.UdtName = "SNL_UDT";
+            cat.Db.Symbol = "D";
+            cat.Db.ArrayName = "SNL";
             cat.FCname = "periphery_SNL";
-            cat.Keys.Add(new mKey { Name = "уровень" });
+            cat.Keys.Add(new KeyModel { Name = "уровень" });
             categories.Add(cat);
 
-            cat = new mCategory(9, "C", "Счетчики");
-            cat.DB.UDT_Number = "9";
-            cat.DB.UDT_Name = "SNC_UDT";
-            cat.DB.ArrayName = "SNC";
-            cat.DB.Symbol = "SNC";
+            cat = new CategoryModel(9, "C", "Счетчики");
+            cat.Db.UdtNumber = "9";
+            cat.Db.UdtName = "SNC_UDT";
+            cat.Db.ArrayName = "SNC";
+            cat.Db.Symbol = "SNC";
             cat.FCname = "periphery_SNC";
-            cat.Keys.Add(new mKey { Name = "Импульсный выход" });
-            cat.Keys.Add(new mKey { Name = "Счетчик" });
+            cat.Keys.Add(new KeyModel { Name = "Импульсный выход" });
+            cat.Keys.Add(new KeyModel { Name = "Счетчик" });
             categories.Add(cat);
 
-            cat = new mCategory(10000, "PID", "ПИД-регуляторы");
-            cat.DB.UDT_Number = "1";
-            cat.DB.UDT_Name = "PID";
-            cat.DB.ArrayName = "PID";
-            cat.DB.Symbol = "PID";
+            cat = new CategoryModel(10000, "PID", "ПИД-регуляторы");
+            cat.Db.UdtNumber = "1";
+            cat.Db.UdtName = "PID";
+            cat.Db.ArrayName = "PID";
+            cat.Db.Symbol = "PID";
             cat.FCname = "periphery_PID";
-            cat.Keys.Add(new mKey { Name = "Регулятор" });
-            cat.Keys.Add(new mKey { Name = "Позиционер" });
+            cat.Keys.Add(new KeyModel { Name = "Регулятор" });
+            cat.Keys.Add(new KeyModel { Name = "Позиционер" });
             categories.Add(cat);
 
 
-            cat = new mCategory(2, "B", "Дискретные сигналы");
-            cat.DB.UDT_Number = "2";
-            cat.DB.Symbol = "B";
-            cat.DB.ArrayName = "SNB";
-            cat.DB.UDT_Name = "SNB_UDT";
+            cat = new CategoryModel(2, "B", "Дискретные сигналы");
+            cat.Db.UdtNumber = "2";
+            cat.Db.Symbol = "B";
+            cat.Db.ArrayName = "SNB";
+            cat.Db.UdtName = "SNB_UDT";
             cat.FCname = "periphery_SNB";
-            cat.Keys.Add(new mKey { Name = "атчик" });
-            cat.Keys.Add(new mKey { Name = "фланш-панел" });
-            cat.Keys.Add(new mKey { Name = "Датчик ФП" });
-            cat.Keys.Add(new mKey { Name = "калача" });
-            cat.Keys.Add(new mKey { Name = "Соединение" });
+            cat.Keys.Add(new KeyModel { Name = "атчик" });
+            cat.Keys.Add(new KeyModel { Name = "фланш-панел" });
+            cat.Keys.Add(new KeyModel { Name = "Датчик ФП" });
+            cat.Keys.Add(new KeyModel { Name = "калача" });
+            cat.Keys.Add(new KeyModel { Name = "Соединение" });
             categories.Add(cat);
 
-            cat = new mCategory(4, "Y", "Клапаны");
-            cat.DB.UDT_Number = "4";
-            cat.DB.Symbol = "Y";
-            cat.DB.ArrayName = "DRV";
+            cat = new CategoryModel(4, "Y", "Клапаны");
+            cat.Db.UdtNumber = "4";
+            cat.Db.Symbol = "Y";
+            cat.Db.ArrayName = "DRV";
             cat.FCname = "periphery_VLV";
-            cat.DB.UDT_Name = "DRV_UDT";
-            cat.Keys.Add(new mKey { Name = "клапан" });
-            cat.Keys.Add(new mKey { Name = "мембр" });
-            cat.Keys.Add(new mKey { Name = "невмоцилиндр" });
+            cat.Db.UdtName = "DRV_UDT";
+            cat.Keys.Add(new KeyModel { Name = "клапан" });
+            cat.Keys.Add(new KeyModel { Name = "мембр" });
+            cat.Keys.Add(new KeyModel { Name = "невмоцилиндр" });
             //cat.Keys.Add("озатор");
             categories.Add(cat);
 
-            cat = new mCategory(7, "MIX", "Мешалки СИ");
-            cat.DB.UDT_Number = "7";
-            cat.DB.UDT_Name = "MIXER_CM_UDT";
-            cat.DB.Symbol = "MIX";
-            cat.DB.ArrayName = "MIX";
+            cat = new CategoryModel(7, "MIX", "Мешалки СИ");
+            cat.Db.UdtNumber = "7";
+            cat.Db.UdtName = "MIXER_CM_UDT";
+            cat.Db.Symbol = "MIX";
+            cat.Db.ArrayName = "MIX";
             cat.FCname = "periphery_MIXER_CM";
-            cat.Keys.Add(new mKey { Name = "мешалка СИ" });
-            cat.Keys.Add(new mKey { Name = "сыроизготовит" });
-            cat.Keys.Add(new mKey { Name = "тормоз" });
+            cat.Keys.Add(new KeyModel { Name = "мешалка СИ" });
+            cat.Keys.Add(new KeyModel { Name = "сыроизготовит" });
+            cat.Keys.Add(new KeyModel { Name = "тормоз" });
             //cat.Keys.Add("СИ");
             categories.Add(cat);
 
-            cat = new mCategory(99, "SC", "Задание скорости");
-            cat.DB.UDT_Number = "1";
-            cat.DB.Symbol = "SC";
-            cat.DB.ArrayName = "SC";
-            cat.DB.UDT_Name = "SC";
+            cat = new CategoryModel(99, "SC", "Задание скорости");
+            cat.Db.UdtNumber = "1";
+            cat.Db.Symbol = "SC";
+            cat.Db.ArrayName = "SC";
+            cat.Db.UdtName = "SC";
             cat.FCname = "periphery_SC";
-            cat.Keys.Add(new mKey { Name = "Задание скорости" });
+            cat.Keys.Add(new KeyModel { Name = "Задание скорости" });
             categories.Add(cat);
 
-            cat = new mCategory(5, "M", "Насосы");
-            cat.DB.UDT_Number = "5";
-            cat.DB.Symbol = "M";
-            cat.DB.ArrayName = "DRV";
+            cat = new CategoryModel(5, "M", "Насосы");
+            cat.Db.UdtNumber = "5";
+            cat.Db.Symbol = "M";
+            cat.Db.ArrayName = "DRV";
             cat.FCname = "periphery_PMP";
-            cat.DB.UDT_Name = "DRV_UDT";
-            cat.Keys.Add(new mKey { Name = "асос" });
-            cat.Keys.Add(new mKey { Name = "пускател" });
-            cat.Keys.Add(new mKey { Name = "ПЧ" });
-            cat.Keys.Add(new mKey { Name = "озатор" });
-            cat.Keys.Add(new mKey { Name = "вибросито" });
-            cat.Keys.Add(new mKey { Name = "мешалк" });
+            cat.Db.UdtName = "DRV_UDT";
+            cat.Keys.Add(new KeyModel { Name = "асос" });
+            cat.Keys.Add(new KeyModel { Name = "пускател" });
+            cat.Keys.Add(new KeyModel { Name = "ПЧ" });
+            cat.Keys.Add(new KeyModel { Name = "озатор" });
+            cat.Keys.Add(new KeyModel { Name = "вибросито" });
+            cat.Keys.Add(new KeyModel { Name = "мешалк" });
             categories.Add(cat);
 
-            cat = new mCategory(6, "mxr", "Мешалки 2х скоростные");
-            cat.DB.UDT_Number = "5";
-            cat.DB.Symbol = "MXR";
-            cat.DB.ArrayName = "DRV";
-            cat.DB.UDT_Name = "DRV_UDT";
+            cat = new CategoryModel(6, "mxr", "Мешалки 2х скоростные");
+            cat.Db.UdtNumber = "5";
+            cat.Db.Symbol = "MXR";
+            cat.Db.ArrayName = "DRV";
+            cat.Db.UdtName = "DRV_UDT";
             cat.FCname = "periphery_MIXER_2S";
-            cat.Keys.Add(new mKey { Name = "мешалк" });
+            cat.Keys.Add(new KeyModel { Name = "мешалк" });
             categories.Add(cat);
 
         }
@@ -169,7 +158,7 @@ namespace OneClick_Analyser
 //----- Интерфейс
         private void btn_devRemove_Click(object sender, RoutedEventArgs e)
         {
-            mCategory item = lst_Devices.SelectedItem as mCategory;
+            CategoryModel item = lst_Devices.SelectedItem as CategoryModel;
             if (item != null)
             {
                 categories.Remove(item);
@@ -178,7 +167,7 @@ namespace OneClick_Analyser
 
         private void btn_devAdd_Click(object sender, RoutedEventArgs e)
         {
-            newItem = new mCategory();
+            newItem = new CategoryModel();
 
             dialog_newItem wnd_newItem = new dialog_newItem(newItem);
             wnd_newItem.Show();
@@ -187,7 +176,7 @@ namespace OneClick_Analyser
 
         private void btn_keyAdd_Click(object sender, RoutedEventArgs e)
         {
-            newKey = new mBaseEntity();
+            newKey = new BaseEntityModel();
 
             dialog_newKey wnd_newKey = new dialog_newKey(newKey);
             wnd_newKey.Show();
@@ -196,20 +185,20 @@ namespace OneClick_Analyser
 
         private void btn_OK_Click(object sender, RoutedEventArgs e)
         {
-            mCategory item = lst_Devices.SelectedItem as mCategory;
+            CategoryModel item = lst_Devices.SelectedItem as CategoryModel;
             if (item != null)
             {
                 if (!newKey.Name.Equals(""))
-                    item.Keys.Add(new mKey { Name = newKey.Name });
+                    item.Keys.Add(new KeyModel { Name = newKey.Name });
             }
         }
 
         private void btn_keyRemove_Click(object sender, RoutedEventArgs e)
         {
-            mCategory item = lst_Devices.SelectedItem as mCategory;
+            CategoryModel item = lst_Devices.SelectedItem as CategoryModel;
             if (item != null)
             {
-                item.Keys.Remove(new mKey { Name = item.SelectedKey });
+                item.Keys.Remove(new KeyModel { Name = item.SelectedKey });
             }
         }
 
@@ -217,7 +206,7 @@ namespace OneClick_Analyser
         private void lst_Keys_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ListBox list = sender as ListBox;
-            mCategory item = lst_Devices.SelectedItem as mCategory;
+            CategoryModel item = lst_Devices.SelectedItem as CategoryModel;
             if (item != null)
             {
                 string k = item.SelectedKey;

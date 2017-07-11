@@ -1,29 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using ClassLibrary;
+﻿using System.Windows;
+using ClassLibrary.Models;
 
-
-namespace OneClick_Analyser
+namespace OneClickUI.Dialogs
 {
     /// <summary>
     /// Логика взаимодействия для dialog_newKey.xaml
     /// </summary>
     public partial class dialog_newKey : Window
     {
-        mBaseEntity item;
+        BaseEntityModel item;
 
 
-        public dialog_newKey(mBaseEntity newItem)
+        public dialog_newKey(BaseEntityModel newItem)
         {
             InitializeComponent();
 

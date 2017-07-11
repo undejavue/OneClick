@@ -1,0 +1,44 @@
+﻿<Window x:Class="OneClickUI.MainFramesView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="OneClick Database" MinHeight="300" MinWidth="900" 
+        WindowStartupLocation="CenterScreen" WindowState="Maximized"
+        >
+    <Window.Resources>
+        <Style x:Key="st_rect" TargetType="Rectangle" >
+            <Setter Property="Fill" Value="#FFDED9D9" />
+            <Setter Property="Stroke" Value="Black" />
+            <Setter Property="Margin" Value="1"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="Opacity" Value="0.5" />
+        </Style>
+
+        <Style x:Key="btn_dbBtn" TargetType="Button">
+            <Setter Property="Height" Value="28" />
+            <Setter Property="Width" Value="100" />
+            <Setter Property="Margin" Value="10,4" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
+        </Style>
+
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="600*"/>
+        </Grid.RowDefinitions>
+
+        <Rectangle Grid.Row="0" Style="{StaticResource st_rect}" HorizontalAlignment="Stretch"/>
+
+        <Frame Content="Frame" Name="mainFrame" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="1" />
+
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="6" >
+            <Button Content="Create" Name="btn_DB_create" Style="{StaticResource btn_dbBtn}" Click="BtnDbCreateClick" IsEnabled="False"/>
+            <Button Content="Insert" Name="btn_DB_add" Style="{StaticResource btn_dbBtn}" Click="BtnDbAddClick" IsEnabled="False"/>
+            <Button Content="Save" Name="btn_DB_Save" Style="{StaticResource btn_dbBtn}" Click="BtnDbSaveClick"/>
+            <Button Content="Delete" Name="btn_DB_Delete" Style="{StaticResource btn_dbBtn}" Click="BtnDbDeleteClick"/>
+            <Button Content="Close" x:Name="btn_DB_Close" Style="{StaticResource btn_dbBtn}" Click="BtnDbCloseClick"/>
+        </StackPanel>
+
+    </Grid>
+</Window>

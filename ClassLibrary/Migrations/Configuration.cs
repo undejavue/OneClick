@@ -1,3 +1,5 @@
+using ClassLibrary.Database;
+
 namespace ClassLibrary.Migrations
 {
     using System;
@@ -5,7 +7,7 @@ namespace ClassLibrary.Migrations
     using System.Data.Entity.Migrations;
     using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<ClassLibrary.Db.OneDbContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<OneDbContext>
     {
         public Configuration()
         {
@@ -13,7 +15,7 @@ namespace ClassLibrary.Migrations
             AutomaticMigrationDataLossAllowed = true;
         }
 
-        protected override void Seed(ClassLibrary.Db.OneDbContext context)
+        protected override void Seed(OneDbContext context)
         {
             //  This method will be called after migrating to the latest version.
 

@@ -1,25 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Microsoft.Win32;
-using System.Diagnostics;
 using System.IO;
-
-using System.Windows;
-
-using Excel = Microsoft.Office.Interop.Excel;
+using System.Linq;
 using System.Runtime.InteropServices;
+using Microsoft.Win32;
+using ClassLibrary.Models;
 
-using ClassLibrary;
-
-namespace OneClick_Analyser
+namespace OneClickUI.Excel
 {
     class ExcelWorks
     {
-        private Excel.Application excelapp;
-        private Excel.Workbook excelbook;
+        private Microsoft.Office.Interop.Excel.Application excelapp;
+        private Microsoft.Office.Interop.Excel.Workbook excelbook;
 
         //public string tableSheetName = "SymbolTable";
         private string _rootdir;
@@ -105,7 +97,7 @@ namespace OneClick_Analyser
                 }
 
                 // Open document
-                excelapp = new Excel.Application();
+                excelapp = new Microsoft.Office.Interop.Excel.Application();
                 excelapp.Visible = true;
                 
                 excelbook = excelapp.Workbooks.Open(filename);
@@ -148,12 +140,12 @@ namespace OneClick_Analyser
                         if (saveChanges)
                         {
                             excelbook.SaveAs(rootdir + "\\JobDone.xlsx");
-                            excelbook.Close(Excel.XlSaveAction.xlSaveChanges);
+                            excelbook.Close(Microsoft.Office.Interop.Excel.XlSaveAction.xlSaveChanges);
                             OnReportMessage("Файл конфигурации сохранен под именем 'JobDone.xlsx'");
                         }
                         else
                         {
-                            excelbook.Close(Excel.XlSaveAction.xlDoNotSaveChanges);
+                            excelbook.Close(Microsoft.Office.Interop.Excel.XlSaveAction.xlDoNotSaveChanges);
                             OnReportMessage("Файл конфигурации закрыт без сохранения");
                         }
                         excelbook = null;
@@ -186,14 +178,14 @@ namespace OneClick_Analyser
 
             if (excelbook != null)
             {
-                Excel.Worksheet destSheet = excelbook.Worksheets.get_Item(sheetName);
-                int last = destSheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell).Row;
+                Microsoft.Office.Interop.Excel.Worksheet destSheet = excelbook.Worksheets.get_Item(sheetName);
+                int last = destSheet.Cells.SpecialCells(Microsoft.Office.Interop.Excel.XlCellType.xlCellTypeLastCell).Row;
 
                 //--- be careful, size of array must be like symbol table, 11xXX
-                Excel.Range xRng = destSheet.Range["A1:K" + last.ToString()];
+                Microsoft.Office.Interop.Excel.Range xRng = destSheet.Range["A1:K" + last.ToString()];
                 arr = new string[xRng.Rows.Count, xRng.Columns.Count];
 
-                foreach (Excel.Range item in xRng)
+                foreach (Microsoft.Office.Interop.Excel.Range item in xRng)
                 {
                     arr[item.Row - 1, item.Column - 1] = Convert.ToString(item.Value);
                 }
@@ -205,7 +197,7 @@ namespace OneClick_Analyser
             return arr;
         }
 
-        private List<string> generateListFromRange(Excel.Range inputRng)
+        private List<string> generateListFromRange(Microsoft.Office.Interop.Excel.Range inputRng)
         {
             object[,] cellValues = (object[,])inputRng.Value2;
             List<string> lst = cellValues.Cast<object>().ToList().ConvertAll(x => Convert.ToString(x));
@@ -217,7 +209,7 @@ namespace OneClick_Analyser
         {
             if ( (excelbook != null) & (arr.GetLength(0) > 0) )
             {
-                Excel.Worksheet destSheet = null;
+                Microsoft.Office.Interop.Excel.Worksheet destSheet = null;
 
                 //----- Добавление листа
                 if (!(isSheetExist(sheetName)))
@@ -230,7 +222,7 @@ namespace OneClick_Analyser
                 destSheet.Select();
                 destSheet.UsedRange.Clear();
 
-                Excel.Range rng = destSheet.get_Range("A1", System.Reflection.Missing.Value).get_Resize(arr.GetLength(0), arr.GetLength(1));
+                Microsoft.Office.Interop.Excel.Range rng = destSheet.get_Range("A1", System.Reflection.Missing.Value).get_Resize(arr.GetLength(0), arr.GetLength(1));
                 rng.set_Value(System.Reflection.Missing.Value, arr);
 
                 OnReportMessage("Выгружены данные в лист " + sheetName);
@@ -242,7 +234,7 @@ namespace OneClick_Analyser
         {
             if ( (excelbook != null) & (arr.GetLength(0) > 0) )
             {
-                Excel.Worksheet destSheet = null;
+                Microsoft.Office.Interop.Excel.Worksheet destSheet = null;
 
                 //----- Добавление листа на базе шаблона
                 if (!(isSheetExist(sheetName)))
@@ -256,7 +248,7 @@ namespace OneClick_Analyser
                 destSheet.Select();
                 destSheet.UsedRange.Clear();
 
-                Excel.Range rng = destSheet.get_Range("A1", System.Reflection.Missing.Value).get_Resize(arr.GetLength(0), arr.GetLength(1));
+                Microsoft.Office.Interop.Excel.Range rng = destSheet.get_Range("A1", System.Reflection.Missing.Value).get_Resize(arr.GetLength(0), arr.GetLength(1));
                 rng.set_Value(System.Reflection.Missing.Value, arr);
 
                 OnReportMessage("Выгружены данные в лист " + sheetName);
@@ -275,7 +267,7 @@ namespace OneClick_Analyser
             {
                 foreach (string listName in listNames)
                 {
-                    foreach (Excel.Worksheet sh in excelbook.Worksheets)
+                    foreach (Microsoft.Office.Interop.Excel.Worksheet sh in excelbook.Worksheets)
                     {
                         if (sh.Name.Equals(listName))
                         {
@@ -294,7 +286,7 @@ namespace OneClick_Analyser
         /// <returns></returns>
         private bool isSheetExist(string name)
         {
-            foreach (Excel.Worksheet sh in excelbook.Worksheets)
+            foreach (Microsoft.Office.Interop.Excel.Worksheet sh in excelbook.Worksheets)
             {
                 if (sh.Name.Equals(name))
                 {
@@ -305,12 +297,12 @@ namespace OneClick_Analyser
         }
 
 
-        public void deleteEmptyRows(Excel.Worksheet sh)
+        public void deleteEmptyRows(Microsoft.Office.Interop.Excel.Worksheet sh)
         {
 
-            Excel.Range currentRow = null;
-            Excel.Range rows = sh.Rows;
-            int currentIndex = sh.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell).Row;
+            Microsoft.Office.Interop.Excel.Range currentRow = null;
+            Microsoft.Office.Interop.Excel.Range rows = sh.Rows;
+            int currentIndex = sh.Cells.SpecialCells(Microsoft.Office.Interop.Excel.XlCellType.xlCellTypeLastCell).Row;
             bool contentFound = false;
             while (!contentFound && currentIndex > 0)
             {
@@ -331,7 +323,7 @@ namespace OneClick_Analyser
         /// <param name="sheetName"></param>
         public void excel_backupSheet(string sheetName)
         {
-            foreach (Excel.Worksheet sh in excelbook.Worksheets)
+            foreach (Microsoft.Office.Interop.Excel.Worksheet sh in excelbook.Worksheets)
             {
                 if (sh.Name.Equals(sheetName))
                 {
@@ -347,24 +339,24 @@ namespace OneClick_Analyser
         /// <param name="sourceSheet">Лист для поиска, источник</param>
         /// <param name="key">Ключ для текстового поиска</param>
         /// <returns>Список строк, преобразованный в список элементов класса символьной таблицы</returns>
-        private List<mSymbolTableItem> OneClick_SearchKey(string sourceSheet, string key)
+        private List<SymbolTableItemModel> OneClick_SearchKey(string sourceSheet, string key)
         {
-            Excel.Sheets sheets = excelbook.Worksheets;
-            Excel.Worksheet sheet = (Excel.Worksheet)sheets.get_Item(sourceSheet);
+            Microsoft.Office.Interop.Excel.Sheets sheets = excelbook.Worksheets;
+            Microsoft.Office.Interop.Excel.Worksheet sheet = (Microsoft.Office.Interop.Excel.Worksheet)sheets.get_Item(sourceSheet);
             sheet.Select();
 
-            Excel.Range currentFind = null;
-            Excel.Range firstFind = null;
-            Excel.Range oneRow = null;
+            Microsoft.Office.Interop.Excel.Range currentFind = null;
+            Microsoft.Office.Interop.Excel.Range firstFind = null;
+            Microsoft.Office.Interop.Excel.Range oneRow = null;
 
-            List<mSymbolTableItem> s7_list = new List<mSymbolTableItem>();
+            List<SymbolTableItemModel> s7_list = new List<SymbolTableItemModel>();
 
             //------ Поиск ------------------------------------------
             currentFind = excelapp.Columns.Find(key, Type.Missing,
-                                                Excel.XlFindLookIn.xlValues,
-                                                Excel.XlLookAt.xlPart,
-                                                Excel.XlSearchOrder.xlByRows,
-                                                Excel.XlSearchDirection.xlNext, false);
+                                                Microsoft.Office.Interop.Excel.XlFindLookIn.xlValues,
+                                                Microsoft.Office.Interop.Excel.XlLookAt.xlPart,
+                                                Microsoft.Office.Interop.Excel.XlSearchOrder.xlByRows,
+                                                Microsoft.Office.Interop.Excel.XlSearchDirection.xlNext, false);
 
             while (currentFind != null) //&(final<10) )
             {
@@ -376,14 +368,14 @@ namespace OneClick_Analyser
                 }
 
                 // If you didn't move to a new range, you are done.
-                else if (currentFind.get_Address(Type.Missing, Type.Missing, Excel.XlReferenceStyle.xlA1, Type.Missing, Type.Missing)
-                      == firstFind.get_Address(Type.Missing, Type.Missing, Excel.XlReferenceStyle.xlA1, Type.Missing, Type.Missing))
+                else if (currentFind.get_Address(Type.Missing, Type.Missing, Microsoft.Office.Interop.Excel.XlReferenceStyle.xlA1, Type.Missing, Type.Missing)
+                      == firstFind.get_Address(Type.Missing, Type.Missing, Microsoft.Office.Interop.Excel.XlReferenceStyle.xlA1, Type.Missing, Type.Missing))
                 {
                     break;
                 }
 
                 int r = currentFind.Row;
-                mSymbolTableItem s7_item = new mSymbolTableItem();
+                SymbolTableItemModel s7_item = new SymbolTableItemModel();
 
                 // Строка символьной таблицы, [А234:K234]
                 oneRow = sheet.Range["A" + r.ToString() + ":K" + r.ToString()];

@@ -1,18 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using ClassLibrary;
+﻿using System.Windows;
+using ClassLibrary.Models;
 
-namespace OneClick_Analyser
+namespace OneClickUI.Dialogs
 {
     /// <summary>
     /// Логика взаимодействия для dialog_newItem.xaml
@@ -20,9 +9,9 @@ namespace OneClick_Analyser
     public partial class dialog_newItem : Window
     {
 
-        mCategory item;
+        CategoryModel item;
 
-        public dialog_newItem(mCategory rItem)
+        public dialog_newItem(CategoryModel rItem)
         {
             InitializeComponent();
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;

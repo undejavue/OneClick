@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.ComponentModel;
-using ClassLibrary;
+using ClassLibrary.Models;
 
-namespace OneClick_Analyser
+namespace OneClickUI
 {
     public class Globals : Entity
     {

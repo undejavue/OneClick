@@ -1,4 +1,4 @@
-﻿<Window x:Class="OneClick_Analyser.anyList"
+﻿<Window x:Class="OneClickUI.Dialogs.anyList"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="List" Height="372" Width="566">

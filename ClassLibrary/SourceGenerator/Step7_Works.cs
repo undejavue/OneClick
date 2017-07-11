@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
+using ClassLibrary.Models;
 
 //using S7HCAX_XLib;
 //using S7HCOM_XLib;
 //using SimaticLib;
 
 
-namespace ClassLibrary
+namespace ClassLibrary.SourceGenerator
 {
     /// <summary>
     /// Фрагменты кода для работы с библиотеками STEP7
@@ -16,7 +14,7 @@ namespace ClassLibrary
     public class Step7_Works
     {
 
-        public List<mBaseEntity> S7testCode()
+        public List<BaseEntityModel> S7testCode()
         {
             //  Код для работы со Step7
             //Simatic sim = new Simatic();
@@ -35,7 +33,7 @@ namespace ClassLibrary
             // S7HCAX_XLib.ICAXImpExpMgr.DoImportFromFile(string, string, string, string);
 
             //IS7Project Proj = sim.Projects.Add(@"C:\MyProject\MyProject.s7p");
-            List<mBaseEntity> plist = new List<mBaseEntity>();
+            List<BaseEntityModel> plist = new List<BaseEntityModel>();
 
 
 
