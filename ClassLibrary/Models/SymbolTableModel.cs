@@ -21,6 +21,11 @@ namespace ClassLibrary.Models
             Symbols = new ObservableCollection<SymbolTableItemModel>();
         }
 
+        public SymbolTableModel (IEnumerable<SymbolTableItemModel> items)
+        {
+            Symbols = new ObservableCollection<SymbolTableItemModel>(items);
+        }
+
         /// <summary>
         /// Создание символьной таблицы из одномерной коллекции строк (колонки таблицы)
         /// </summary>

@@ -9,6 +9,7 @@ using ClassLibrary.SourceGenerator;
 using Microsoft.Win32;
 using OneClickUI.Dialogs;
 using OneClickUI.Excel;
+using OneClickUI.ViewModels;
 
 namespace OneClickUI
 {
@@ -17,6 +18,9 @@ namespace OneClickUI
     /// </summary>
     public partial class MainWindow
     {
+        private MainViewModel viewModel;
+
+
         private ObservableCollection<CategoryModel> categories;
         private SourceGenerator sources;
         private ExcelWorks exWorks;
@@ -29,6 +33,7 @@ namespace OneClickUI
         public MainWindow()
         {
             InitializeComponent();
+            viewModel = new MainViewModel();
 
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
@@ -102,7 +107,7 @@ namespace OneClickUI
             BtnCancel.IsEnabled = false;
             BtnGenSource.IsEnabled = true;
 
-            exWorks.setVisible(true);
+            exWorks.SetVisible(true);
         }
 
         //----- Интерфейс основных операций  -----------------------------------------
@@ -145,11 +150,11 @@ namespace OneClickUI
         {
             if (bgWorker.IsBusy)
             {
-                bgWorker.ReportProgress(50, args.message);
+                bgWorker.ReportProgress(50, args.Message);
             }
             else
             {
-                this.TxtResult.AppendText("\r\n" + DateTime.Now.ToString("h:mm:ss") + ": " + args.message);
+                this.TxtResult.AppendText("\r\n" + DateTime.Now.ToString("h:mm:ss") + ": " + args.Message);
             }
         }
 
@@ -166,7 +171,7 @@ namespace OneClickUI
                 bgWorker.RunWorkerAsync(arg);
 
                 BtnCancel.IsEnabled = true;
-                exWorks.setVisible(G.isExcelVisible);
+                exWorks.SetVisible(G.isExcelVisible);
             }
             else
                 MessageBox.Show("Уже идет выполнение фоновой операции");
@@ -201,7 +206,7 @@ namespace OneClickUI
                 bgWorker.RunWorkerAsync(arg);
 
                 BtnCancel.IsEnabled = true;
-                exWorks.setVisible(G.isExcelVisible);
+                exWorks.SetVisible(G.isExcelVisible);
             }
             else
                 MessageBox.Show("Уже идет выполнение фоновой операции");
@@ -231,14 +236,14 @@ namespace OneClickUI
         //--- Сохранить и закрыть файл конфигурации
         private void BtnSaveClick(object sender, RoutedEventArgs e)
         {
-            exWorks.closeExcel(true);
+            exWorks.CloseExcel(true);
             G.filename = "";
         }
 
         //--- Закрыть файл конфигурации
         private void BtnCloseClick(object sender, RoutedEventArgs e)
         {
-            exWorks.closeExcel(false);
+            exWorks.CloseExcel(false);
             G.filename = "";
         }
 
@@ -278,7 +283,7 @@ namespace OneClickUI
         /// <param name="e">Параметры асинхронного обработчика</param>
         private void OneClickTableAdaptation(DoWorkEventArgs e)
         {
-            exWorks.excel_backupSheet("SymbolTable");
+            exWorks.Excel_backupSheet("SymbolTable");
             bgWorker.ReportProgress(5, "Резервная копия таблицы создана");
 
             if (bgWorker.CancellationPending)
@@ -287,7 +292,7 @@ namespace OneClickUI
                 return;
             }
 
-            var symbolTableModel = new SymbolTableModel(exWorks.generate_ArrayFromRange("SymbolTable", true));
+            var symbolTableModel = new SymbolTableModel(exWorks.Generate_ArrayFromRange("SymbolTable", true));
             bgWorker.ReportProgress(30, "Таблица прочитана в память");
 
             if (bgWorker.CancellationPending)
@@ -315,7 +320,7 @@ namespace OneClickUI
             }
 
             var arr = symbolTableModel.GetSymbolsArray();
-            exWorks.printArrayToSheet(arr, "SymbolTable");
+            exWorks.PrintArrayToSheet(arr, "SymbolTable");
             bgWorker.ReportProgress(98, "Таблица выгружена в Excel");
 
             symbolTableModel.ClearSymbols();
@@ -330,12 +335,12 @@ namespace OneClickUI
         /// <param name="e"></param>
         private void OneClickTableToCollection(DoWorkEventArgs e)
         {
-            exWorks.excel_backupSheet("SymbolTable");
+            exWorks.Excel_backupSheet("SymbolTable");
             bgWorker.ReportProgress(10, "Запуск цикла сортировки таблицы по категориям...");
 
             if (categories.Count > 0)
             {
-                var unsortedTableModel = new SymbolTableModel(exWorks.generate_ArrayFromRange("SymbolTable", true));
+                var unsortedTableModel = new SymbolTableModel(exWorks.Generate_ArrayFromRange("SymbolTable", true));
                 bgWorker.ReportProgress(40, "Таблица загружена в память");
 
 
@@ -374,10 +379,10 @@ namespace OneClickUI
                     }
 
                     category.SortCollectionByCodename();
-                    exWorks.printArrayToSheetTemplate(category.GetSymbolsArrayEx(), category.Name);
+                    exWorks.PrintArrayToSheetTemplate(category.GetSymbolsArrayEx(), category.Name);
                 }
 
-                exWorks.printArrayToSheet(unsortedTableModel.GetSymbolsArray(), "unSorTed");
+                exWorks.PrintArrayToSheet(unsortedTableModel.GetSymbolsArray(), "unSorTed");
 
                 bgWorker.ReportProgress(99, "Выполнена выгрузка категорий в Excel");
 
@@ -401,7 +406,7 @@ namespace OneClickUI
             sources = new SourceGenerator(categories.ToList());
 
             bgWorker.ReportProgress(30, "Выгрузка листа блоков данных...");
-            exWorks.printArrayToSheet(sources.PrintDBlistToArray(), "DB_list");
+            exWorks.PrintArrayToSheet(sources.PrintDBlistToArray(), "DB_list");
 
             if (bgWorker.CancellationPending)
             {
@@ -567,7 +572,7 @@ namespace OneClickUI
             {
                 catNames.Add(cat.Name);
             }
-            exWorks.deleteLists(catNames);
+            exWorks.DeleteLists(catNames);
         }
 
 
@@ -585,7 +590,7 @@ namespace OneClickUI
 
                 try
                 {
-                    exWorks.closeExcel(false);
+                    exWorks.CloseExcel(false);
                 }
                 catch (Exception ex)
                 {
@@ -620,9 +625,12 @@ namespace OneClickUI
 
         private void BtnS7CodeClick(object sender, RoutedEventArgs e)
         {
-            var s7 = new Step7_Works();
+           // var s7 = new Step7_Works();
 
-            s7.S7testCode();
+            //s7.S7testCode();
+
+            viewModel.SerializeTableCommand.Execute(G.filename);
+            
         }
 
 

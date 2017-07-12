@@ -43,17 +43,14 @@ namespace OneClickUI.Excel
 
         protected virtual void OnReportMessage(string message)
         {
-            if (ReportMessage != null)
-            {
-                ReportMessage(this, new OneClickEventArgs(message));
-            }
+            ReportMessage?.Invoke(this, new OneClickEventArgs(message));
         }
 
 
         public ExcelWorks(string dir) 
         {
             if (string.IsNullOrEmpty(dir))
-                rootdir = System.Environment.CurrentDirectory;
+                rootdir = Environment.CurrentDirectory;
             else
                 rootdir = dir;
         }
@@ -64,9 +61,9 @@ namespace OneClickUI.Excel
         /// <returns>Имя рабочей директории</returns>
         public string OpenExcel()
         {
-            string dir = rootdir;
+            var dir = rootdir;
 
-            OpenFileDialog openDlg = new OpenFileDialog();
+            var openDlg = new OpenFileDialog();
 
             openDlg.InitialDirectory = dir;
             openDlg.Filter = "Excel documents (*.xls, *.xlsm)|*.xls; *.xlsx; *.xslm|All Files (*.*)|*.*";
@@ -75,14 +72,13 @@ namespace OneClickUI.Excel
             openDlg.DefaultExt = ".xls";
 
             // Display OpenFileDialog by calling ShowDialog method
-            bool? result = openDlg.ShowDialog();
+            var result = openDlg.ShowDialog();
 
             // Get the selected file name and display in a TextBox
             if (result == true)
             {
-                string safename = openDlg.SafeFileName;
-                string filename = openDlg.FileName;
-
+                var safename = openDlg.SafeFileName;
+                var filename = openDlg.FileName;
                 dir = filename.Remove(filename.Length - safename.Length - 1);
 
                 // Create backup of xlsfile
@@ -98,24 +94,18 @@ namespace OneClickUI.Excel
 
                 // Open document
                 excelapp = new Microsoft.Office.Interop.Excel.Application();
-                excelapp.Visible = true;
-                
+                excelapp.Visible = true;               
                 excelbook = excelapp.Workbooks.Open(filename);
-
                 OnReportMessage("Открыт файл конфигурации " + filename);
-
-                
-                
                 fileName = filename;
             }
 
             OnReportMessage("Задана рабочая директория " + dir);
-
             rootdir = dir;
             return dir;
         }
 
-        public bool setVisible(bool visible)
+        public bool SetVisible(bool visible)
         {
             if ( (this.excelapp != null) & (this.excelbook != null) )
             {
@@ -129,7 +119,7 @@ namespace OneClickUI.Excel
         /// Закрыть файл конфигурации
         /// </summary>
         /// <param name="saveChanges">Сохранить изменения</param>
-        public void closeExcel(bool saveChanges)
+        public void CloseExcel(bool saveChanges)
         {
             try
             {
@@ -152,11 +142,9 @@ namespace OneClickUI.Excel
 
                         //Marshal.ReleaseComObject(excelappworkbook);
                     }
-
                     excelapp.Quit();
                     Marshal.ReleaseComObject(excelapp);
                     excelapp = null;
-
                 }
             }
             catch (Exception e)
@@ -171,7 +159,7 @@ namespace OneClickUI.Excel
         /// </summary>
         /// <param name="sheetName"></param>
         /// <returns></returns>
-        public string[,] generate_ArrayFromRange(string sheetName, bool withClear)
+        public string[,] Generate_ArrayFromRange(string sheetName, bool withClear)
         {
             
             var arr = new string[1, 1];
@@ -179,10 +167,10 @@ namespace OneClickUI.Excel
             if (excelbook != null)
             {
                 Microsoft.Office.Interop.Excel.Worksheet destSheet = excelbook.Worksheets.get_Item(sheetName);
-                int last = destSheet.Cells.SpecialCells(Microsoft.Office.Interop.Excel.XlCellType.xlCellTypeLastCell).Row;
+                var last = destSheet.Cells.SpecialCells(Microsoft.Office.Interop.Excel.XlCellType.xlCellTypeLastCell).Row;
 
                 //--- be careful, size of array must be like symbol table, 11xXX
-                Microsoft.Office.Interop.Excel.Range xRng = destSheet.Range["A1:K" + last.ToString()];
+                var xRng = destSheet.Range["A1:K" + last.ToString()];
                 arr = new string[xRng.Rows.Count, xRng.Columns.Count];
 
                 foreach (Microsoft.Office.Interop.Excel.Range item in xRng)
@@ -197,22 +185,22 @@ namespace OneClickUI.Excel
             return arr;
         }
 
-        private List<string> generateListFromRange(Microsoft.Office.Interop.Excel.Range inputRng)
+        private List<string> GenerateListFromRange(Microsoft.Office.Interop.Excel.Range inputRng)
         {
-            object[,] cellValues = (object[,])inputRng.Value2;
-            List<string> lst = cellValues.Cast<object>().ToList().ConvertAll(x => Convert.ToString(x));
+            var cellValues = (object[,])inputRng.Value2;
+            var lst = cellValues.Cast<object>().ToList().ConvertAll(x => Convert.ToString(x));
             return lst;
         }
 
 
-        public void printArrayToSheet(String[,] arr, string sheetName)
+        public void PrintArrayToSheet(String[,] arr, string sheetName)
         {
             if ( (excelbook != null) & (arr.GetLength(0) > 0) )
             {
                 Microsoft.Office.Interop.Excel.Worksheet destSheet = null;
 
                 //----- Добавление листа
-                if (!(isSheetExist(sheetName)))
+                if (!(IsSheetExist(sheetName)))
                 {
                     destSheet = excelbook.Worksheets.Add();
                     destSheet.Name = sheetName;
@@ -222,7 +210,7 @@ namespace OneClickUI.Excel
                 destSheet.Select();
                 destSheet.UsedRange.Clear();
 
-                Microsoft.Office.Interop.Excel.Range rng = destSheet.get_Range("A1", System.Reflection.Missing.Value).get_Resize(arr.GetLength(0), arr.GetLength(1));
+                var rng = destSheet.get_Range("A1", System.Reflection.Missing.Value).get_Resize(arr.GetLength(0), arr.GetLength(1));
                 rng.set_Value(System.Reflection.Missing.Value, arr);
 
                 OnReportMessage("Выгружены данные в лист " + sheetName);
@@ -230,14 +218,14 @@ namespace OneClickUI.Excel
         }
 
 
-        public void printArrayToSheetTemplate(String[,] arr, string sheetName)
+        public void PrintArrayToSheetTemplate(String[,] arr, string sheetName)
         {
             if ( (excelbook != null) & (arr.GetLength(0) > 0) )
             {
                 Microsoft.Office.Interop.Excel.Worksheet destSheet = null;
 
                 //----- Добавление листа на базе шаблона
-                if (!(isSheetExist(sheetName)))
+                if (!(IsSheetExist(sheetName)))
                 {
                     destSheet = excelbook.Worksheets.get_Item("template");
                     destSheet.Copy(excelbook.Worksheets.get_Item("template"));
@@ -248,7 +236,7 @@ namespace OneClickUI.Excel
                 destSheet.Select();
                 destSheet.UsedRange.Clear();
 
-                Microsoft.Office.Interop.Excel.Range rng = destSheet.get_Range("A1", System.Reflection.Missing.Value).get_Resize(arr.GetLength(0), arr.GetLength(1));
+                var rng = destSheet.get_Range("A1", System.Reflection.Missing.Value).get_Resize(arr.GetLength(0), arr.GetLength(1));
                 rng.set_Value(System.Reflection.Missing.Value, arr);
 
                 OnReportMessage("Выгружены данные в лист " + sheetName);
@@ -261,11 +249,11 @@ namespace OneClickUI.Excel
         /// Удаление списка листов из книги
         /// </summary>
         /// <param name="listNames">Список имен листов</param>
-        public void deleteLists(List<string> listNames)
+        public void DeleteLists(List<string> listNames)
         {
             if (this.excelbook != null)
             {
-                foreach (string listName in listNames)
+                foreach (var listName in listNames)
                 {
                     foreach (Microsoft.Office.Interop.Excel.Worksheet sh in excelbook.Worksheets)
                     {
@@ -284,7 +272,7 @@ namespace OneClickUI.Excel
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        private bool isSheetExist(string name)
+        private bool IsSheetExist(string name)
         {
             foreach (Microsoft.Office.Interop.Excel.Worksheet sh in excelbook.Worksheets)
             {
@@ -297,13 +285,13 @@ namespace OneClickUI.Excel
         }
 
 
-        public void deleteEmptyRows(Microsoft.Office.Interop.Excel.Worksheet sh)
+        public void DeleteEmptyRows(Microsoft.Office.Interop.Excel.Worksheet sh)
         {
 
             Microsoft.Office.Interop.Excel.Range currentRow = null;
-            Microsoft.Office.Interop.Excel.Range rows = sh.Rows;
-            int currentIndex = sh.Cells.SpecialCells(Microsoft.Office.Interop.Excel.XlCellType.xlCellTypeLastCell).Row;
-            bool contentFound = false;
+            var rows = sh.Rows;
+            var currentIndex = sh.Cells.SpecialCells(Microsoft.Office.Interop.Excel.XlCellType.xlCellTypeLastCell).Row;
+            var contentFound = false;
             while (!contentFound && currentIndex > 0)
             {
                 currentRow = rows[currentIndex];
@@ -321,7 +309,7 @@ namespace OneClickUI.Excel
         /// Резервное копирование листа
         /// </summary>
         /// <param name="sheetName"></param>
-        public void excel_backupSheet(string sheetName)
+        public void Excel_backupSheet(string sheetName)
         {
             foreach (Microsoft.Office.Interop.Excel.Worksheet sh in excelbook.Worksheets)
             {
@@ -341,15 +329,15 @@ namespace OneClickUI.Excel
         /// <returns>Список строк, преобразованный в список элементов класса символьной таблицы</returns>
         private List<SymbolTableItemModel> OneClick_SearchKey(string sourceSheet, string key)
         {
-            Microsoft.Office.Interop.Excel.Sheets sheets = excelbook.Worksheets;
-            Microsoft.Office.Interop.Excel.Worksheet sheet = (Microsoft.Office.Interop.Excel.Worksheet)sheets.get_Item(sourceSheet);
+            var sheets = excelbook.Worksheets;
+            var sheet = (Microsoft.Office.Interop.Excel.Worksheet)sheets.get_Item(sourceSheet);
             sheet.Select();
 
             Microsoft.Office.Interop.Excel.Range currentFind = null;
             Microsoft.Office.Interop.Excel.Range firstFind = null;
             Microsoft.Office.Interop.Excel.Range oneRow = null;
 
-            List<SymbolTableItemModel> s7_list = new List<SymbolTableItemModel>();
+            var s7_list = new List<SymbolTableItemModel>();
 
             //------ Поиск ------------------------------------------
             currentFind = excelapp.Columns.Find(key, Type.Missing,
@@ -374,8 +362,8 @@ namespace OneClickUI.Excel
                     break;
                 }
 
-                int r = currentFind.Row;
-                SymbolTableItemModel s7_item = new SymbolTableItemModel();
+                var r = currentFind.Row;
+                var s7_item = new SymbolTableItemModel();
 
                 // Строка символьной таблицы, [А234:K234]
                 oneRow = sheet.Range["A" + r.ToString() + ":K" + r.ToString()];
@@ -413,17 +401,13 @@ namespace OneClickUI.Excel
         }
     }
 
-    class OneClickEventArgs : EventArgs
+    internal class OneClickEventArgs : EventArgs
     {
-        private readonly string _message;
-        public string message
-        {
-            get { return this._message; }
-        }
+        public string Message { get; }
 
         public OneClickEventArgs(string text)
         {
-            this._message = text;
+            this.Message = text;
         }
 
 
