@@ -1,49 +1,19 @@
 ﻿<Window x:Class="OneClickUI.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="OneClick Automation" Height="620" Width="836" ResizeMode="NoResize" Closing="Window_Closing"    
-        Foreground="WhiteSmoke"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModels="clr-namespace:OneClickUI.ViewModels"
+        mc:Ignorable="d"
+        Title="OneClick Automation" Width="836" Height="620"
+        ResizeMode="NoResize" 
+        Closing="Window_Closing"    
+        d:DataContext="{d:DesignInstance d:Type=viewModels:MainViewModel, IsDesignTimeCreatable=True}"
         >
     <Window.Resources>
-        <LinearGradientBrush x:Key="Buttongradient" StartPoint="0.500023,0.999996" EndPoint="0.500023,4.37507e-006">
-            <GradientStop Color="#5e5e5e" Offset="1" />
-            <GradientStop Color="#0b0b0b" Offset="0" />
-        </LinearGradientBrush>
-
-        <Style TargetType="TextBlock">
-            <Setter Property="Foreground" Value="Black" />
-        </Style>
-
-        <Style TargetType="Label">
-            <Setter Property="Foreground" Value="WhiteSmoke" />
-        </Style>
-
-        <Style x:Key="StRect" TargetType="Rectangle" >
-            <Setter Property="Fill" Value="{DynamicResource Buttongradient}" />
-            <Setter Property="Stroke" Value="Black" />
-            <Setter Property="Margin" Value="1"/>
-            <Setter Property="HorizontalAlignment" Value="Left"/>
-            <Setter Property="Opacity" Value="0.3" />
-
-        </Style>
-
-        <Style x:Key="BtnWorkBtn" TargetType="Button">
-            <Setter Property="Height" Value="32" />
-            <Setter Property="Width" Value="120" />
-            <Setter Property="Margin" Value="4" />
-            <Setter Property="HorizontalAlignment" Value="Right" />
-            <Setter Property="Background" Value="{DynamicResource Buttongradient}"/>
-            <Setter Property="Foreground" Value="White" />
-            <Setter Property="FontSize" Value="13" />
-            <Setter Property="SnapsToDevicePixels" Value="True" />
-
-        </Style>
     </Window.Resources>
-
-
-    <!--DataContext="{Binding RelativeSource={RelativeSource Self}}"-->
-
-    <Grid Margin="0" Name="GridMain" Background="{DynamicResource Buttongradient}"  HorizontalAlignment="Stretch" >
+    <Grid Margin="0" Name="GridMain" HorizontalAlignment="Stretch"
+          Background="{StaticResource ListBoxBackgroundBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -52,13 +22,13 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
 
         <Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Height="24" VerticalContentAlignment="Center" 
               Name="MainMenu" BorderThickness="0,1,0,1" BorderBrush="Gray" Margin="0" 
-              Background="#FF1B1A1A" Foreground="#FFDCDADA" >
+              Background="{StaticResource AccordionBackgroundBrush}" Foreground="{StaticResource ForegroundBrush}" >
             <MenuItem Header="Файл" >
                 <MenuItem Header="Open" Click="MenuItem_Open_Click"></MenuItem>
                 <MenuItem Header="Quit" Click="MenuItem_Quit_Click"></MenuItem>
@@ -73,8 +43,12 @@
             </MenuItem>
         </Menu>
 
-        <Label Content="Операции с файлом конфигурации" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" Margin="0,10,0,0" />
-        <Grid Grid.Row="2" Grid.Column="0" Margin="4,10,2,10" Name="GridFileOperations"  Width="400">
+        <Label Content="Операции с файлом конфигурации" Grid.Row="1" Grid.Column="0" 
+               VerticalAlignment="Center" FontWeight="Bold"
+               HorizontalAlignment="Center" Margin="0,10,0,10" />
+        <Grid Grid.Row="2" Grid.Column="0" Margin="10,10,10,10" 
+              Name="GridFileOperations"  Width="Auto"
+               >
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -91,108 +65,77 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="260"/>
-                <ColumnDefinition Width="140"/>
+                <ColumnDefinition Width="26*"/>
+                <ColumnDefinition Width="14*"/>
             </Grid.ColumnDefinitions>
-
-            <Rectangle Grid.Row="0" Grid.ColumnSpan="2"  Style="{StaticResource ResourceKey=StRect}" Width="398"  />
-            <Rectangle Grid.Row="1" Grid.ColumnSpan="2"  Style="{StaticResource ResourceKey=StRect}" Width="398" />
-            <!--<Rectangle Grid.Row="2" Grid.ColumnSpan="2"  Style="{StaticResource ResourceKey=st_rect}" Width="400" />-->
-            <Rectangle Grid.Row="3" Grid.ColumnSpan="2"  Style="{StaticResource ResourceKey=StRect}" Width="398" />
-            <Rectangle Grid.Row="4" Grid.ColumnSpan="2"  Style="{StaticResource ResourceKey=StRect}" Width="398" />
-            <Rectangle Grid.Row="5" Grid.ColumnSpan="2"  Style="{StaticResource ResourceKey=StRect}" Width="398" />
-            <Rectangle Grid.Row="6" Grid.ColumnSpan="2"  Style="{StaticResource ResourceKey=StRect}" Width="398" />
-            <Rectangle Grid.Row="7" Grid.ColumnSpan="2"  Style="{StaticResource ResourceKey=StRect}" Width="398" />
-            <Rectangle Grid.Row="8" Grid.ColumnSpan="2"  Style="{StaticResource ResourceKey=StRect}" Width="398" />
-            <!--<Rectangle Grid.Row="9" Grid.ColumnSpan="2"  Style="{StaticResource ResourceKey=st_rect}" Width="400" />-->
 
             <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
                 <Label Content="Шаг 1. Задать категории сортировки" VerticalContentAlignment="Center" />
-                <TextBox Name="TxtCategoriesCount" Text="{Binding Path=categoriesCount}" Margin="20,0" 
-                         MinWidth="20" Height="20" IsReadOnly="True" />
+                <TextBox Name="TxtCategoriesCount" Text="{Binding Categories.Count, Mode=OneWay}" Margin="20,0" 
+                         MinWidth="30" Height="20" IsReadOnly="True" />
             </StackPanel>
-            <Button Grid.Row="0" Grid.Column="1" Content="Категории" Style="{StaticResource BtnWorkBtn}" 
-                    x:Name="BtnSetCategories" Click="BtnSetCategoriesClick" ToolTip="Файл конфигурации в формате Excel" >
+            <Button Grid.Row="0" Grid.Column="1" Content="Категории" Margin="8"
+                    x:Name="BtnSetCategories" Command="{Binding CategoriesCommand}" CommandParameter="{Binding RootDirectory}"
+                    ToolTip="Файл конфигурации в формате Excel" >
             </Button>
 
-            <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Vertical" Margin="2,4">
-                <Label  Content="Шаг 2. Выбрать файл-конфигурации" VerticalAlignment="Top" Height="Auto" VerticalContentAlignment="Top" />
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="Рабочая директория:" FontSize="10" />
-                    <Border  Height="Auto" Width="140" Margin="8,0" BorderBrush="Black" BorderThickness="1">
-                        <TextBlock x:Name="TxtRootdir" Height="Auto" Width="140" 
-                	               Margin="0,0" TextWrapping="Wrap" HorizontalAlignment="Right" TextAlignment="Right" 
-                                   Text="{Binding rootdir, Mode=OneWay}" Background="WhiteSmoke" FontSize="10" />
-                    </Border>
-                </StackPanel>
-            </StackPanel>
+            <Label   Grid.Row="1" Grid.Column="0" Content="Шаг 2. Выбрать файл-конфигурации" 
+                     VerticalAlignment="Stretch" Height="Auto" 
+                     VerticalContentAlignment="Center" />
 
-            <Button Grid.Row="1" Grid.Column="1" Content="Открыть файл" x:Name="BtnExcelOpen" Style="{StaticResource BtnWorkBtn}" 
-                    Click="BtnExcelOpenClick" VerticalAlignment="Bottom"  ToolTip="Файл конфигурации в формате Excel" />
-
-            <CheckBox Grid.Row="3" Grid.Column="0" Content="Show Excel" x:Name="BoxShowExcel"  
-                      Height="24" Width="80" Margin="4" 
-                      HorizontalAlignment="Left" VerticalContentAlignment="Center"  
-                      IsChecked="{Binding Path=IsExcelVisible, Mode=TwoWay}" 
-                      Click="BoxShowExcelClick" Foreground="White" />
-
-            <Border Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Height="Auto" BorderBrush="Black" 
-                    BorderThickness="1" Margin="0,5,4,4" Width="280" HorizontalAlignment="Right">
-                <TextBlock   Name="TxtFilename" Height="Auto" Width="280" FontSize="11" 
-                             TextAlignment="Center"
-                             TextWrapping="Wrap"  
-                             Text="{Binding Path=filename, Mode=OneWay}" 
-                             Background="#FFECECEC" />
-            </Border>
-
+            <Button Grid.Row="1" Grid.Column="1" Content="Открыть файл" x:Name="BtnExcelOpen" Margin="8"
+                    Click="BtnExcelOpenClick"                   
+                    VerticalAlignment="Bottom"  
+                    ToolTip="Файл конфигурации в формате Excel" 
+                    Command="{Binding FileSelectCommand}"
+                    />
+            <DockPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
+                <Border BorderBrush="Gray" 
+                        BorderThickness="1" Margin="0,0,8,0"  DockPanel.Dock="Right">
+                    <TextBlock   Name="TxtFilename" Height="30" 
+                                 TextAlignment="Center" VerticalAlignment="Center"
+                                 TextWrapping="Wrap" Foreground="{StaticResource ForegroundBrush}"
+                                 Text="{Binding Path=RootDirectory, Mode=OneWay}" 
+                    />
+                </Border>
+            </DockPanel>
             <Label Grid.Row="4" Grid.Column="0" Content="Шаг 3. Первый проход анализа" 
                    VerticalContentAlignment="Center" />
-            <Button Grid.Row="4" Grid.Column="1" 
+            <Button Grid.Row="4" Grid.Column="1" Margin="8"
                     Content="Анализ таблицы" x:Name="BtnTblAdapt" 
-                    Style="{StaticResource BtnWorkBtn}" 
-                    Click="BtnTableAdaptationClick" IsEnabled="False" 
+                    Command="{Binding SerializeTableCommand}"
                     ToolTip="Первоначальная обработка символьной таблицы" />
 
             <Label Grid.Row="5" Grid.Column="0" Content="Шаг 4. Полный проход и сортировка" 
                    VerticalContentAlignment="Center" />
             <Button Grid.Row="5" Grid.Column="1" Content="Обработка данных" 
-                    x:Name="BtnOperations" 
-                    Style="{StaticResource BtnWorkBtn}" 
-                    Click="BtnOperationsClick" IsEnabled="False" />
+                    x:Name="BtnOperations" Margin="8"
+                    Click="BtnOperationsClick"  />
 
             <StackPanel Grid.Row="6" Grid.Column="0" Orientation="Vertical" Margin="2,4">
-                <Label  Content="Шаг 2. Выбрать файл-конфигурации" 
-                        VerticalAlignment="Top" Height="Auto" VerticalContentAlignment="Top" />
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="Рабочая директория:" FontSize="10" />
-                    <Border  Height="Auto" Width="140" Margin="8,0" BorderBrush="Black" BorderThickness="1">
-                        <TextBlock Grid.Row="10" Grid.Column="0" x:Name="TxtSourcedir" 
-                                    Height="Auto" Width="140"
-                	                Margin="0" TextWrapping="Wrap" HorizontalAlignment="Right" 
-                                    TextAlignment="Right" Text="{Binding sourcedir, Mode=OneWay}" 
-                                   Background="WhiteSmoke" FontSize="10" />
-                    </Border>
-                </StackPanel>
             </StackPanel>
-            <Button Grid.Row="6" Grid.Column="1" Content="Исходные коды" 
-                    Name="BtnGenSource" Style="{StaticResource BtnWorkBtn}" VerticalAlignment="Bottom"  
-                    Click="BtnGenSourceClick" IsEnabled="False"/>
-            <Button Grid.Row="7" Grid.Column="1" Content="Сохранить" 
-                    x:Name="BtnSave" Style="{StaticResource BtnWorkBtn}" 
+            <Button Grid.Row="6" Grid.Column="1" Content="Исходные коды" Margin="8"
+                    Name="BtnGenSource"  VerticalAlignment="Bottom"  
+                    Click="BtnGenSourceClick" />
+            <!--<Button Grid.Row="7" Grid.Column="1" Content="Сохранить" 
+                    x:Name="BtnSave" Margin="8"
                     Click="BtnSaveClick" IsEnabled="False"  />
             <Button Grid.Row="8" Grid.Column="1" Content="Закрыть"  
-                    x:Name="BtnClose" Style="{StaticResource BtnWorkBtn}" 
-                    Click="BtnCloseClick" IsEnabled="False" />
+                    x:Name="BtnClose" Margin="8"
+                    Click="BtnCloseClick" IsEnabled="False" />-->
         </Grid>
 
         <Label Content="Операции с базой данных" Grid.Row="1" Grid.Column="1" 
-               HorizontalAlignment="Center" Margin="0,10,0,0"  />
+               FontWeight="Bold"
+               HorizontalAlignment="Center" Margin="0,10,0,10"  />
 
-        <Grid Grid.Row="2" Grid.Column="1" Margin="4,10,0,0"  Name="GridDbOperations" 
-              HorizontalAlignment="Left" Width="400" Height="Auto"  >
+        <Grid Grid.Row="2" Grid.Column="1" Margin="10,10,10,0"  
+              Name="GridDbOperations"
+              HorizontalAlignment="Stretch" 
+              Width="Auto" Height="Auto"  >
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
+
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -200,49 +143,75 @@
 
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="260"/>
-                <ColumnDefinition Width="140"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="1.5*"/>
             </Grid.ColumnDefinitions>
 
-            <Rectangle Grid.Row="0" Grid.ColumnSpan="2"  Style="{StaticResource ResourceKey=StRect}" Width="398"  />
-            <Rectangle Grid.Row="1" Grid.ColumnSpan="2"  Style="{StaticResource ResourceKey=StRect}" Width="398" />
-            <!--<Rectangle Grid.Row="2" Grid.ColumnSpan="2"  Style="{StaticResource ResourceKey=st_rect}" Width="400" />
-                <Rectangle Grid.Row="3" Grid.ColumnSpan="2"  Style="{StaticResource ResourceKey=st_rect}" Width="398" />-->
+            <Label Grid.Row="0" Grid.Column="0" Content="Создать новую базу данных" 
+                   VerticalContentAlignment="Center" />
+            <Button Grid.Row="0" Grid.Column="1" 
+                    Content="Создать БД" 
+                    Name="BtnDBcreate" 
+                    Click="BtnDBcreateClick" 
+                    Margin="8"/>
 
-            <Label Grid.Row="0" Grid.Column="0" Content="Создать новую базу данных" VerticalContentAlignment="Center" />
-            <Button Grid.Row="0" Grid.Column="1" Content="Создать БД" Name="BtnDBcreate" 
-                    Style="{StaticResource BtnWorkBtn}" Click="BtnDBcreateClick" />
+            <Label Grid.Row="1" Grid.Column="0" Content="Открыть БД из файла" 
+                   Height="Auto" VerticalAlignment="Center" />
 
-            <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Vertical" Margin="2,4">
-                <Label  Content="Открыть БД из файла" VerticalAlignment="Top" 
-                        Height="Auto" VerticalContentAlignment="Top" />
-                <Border  Height="Auto" HorizontalAlignment="Stretch" Margin="4,0" BorderBrush="Black" BorderThickness="1">
-                    <TextBlock x:Name="TxtDBfilename" Height="20" TextAlignment="Right"
-                        Margin="0" TextWrapping="Wrap" HorizontalAlignment="Stretch" 
-                               Text="{Binding Path=DBfilename}" Background="WhiteSmoke" />
+            <Button Grid.Row="1" Grid.Column="1" Margin="8"
+                    Content="Открыть БД" Name="BtnDBopen" 
+                    VerticalAlignment="Bottom" Click="BtnDBopenClick" />
+            <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
+                <Border  
+                         HorizontalAlignment="Stretch" 
+                         VerticalAlignment="Stretch"
+                         Margin="0,0" BorderBrush="Gray" 
+                         BorderThickness="1">
+                    <TextBlock x:Name="TxtDBfilename" Height="30" 
+                               TextAlignment="Right"
+                               Margin="0" TextWrapping="Wrap" 
+                               HorizontalAlignment="Stretch" 
+                               VerticalAlignment="Stretch"
+                               Text="{Binding Path=DBfilename}" 
+                    />
                 </Border>
             </StackPanel>
-            <Button Grid.Row="1" Grid.Column="1" Content="Открыть БД" Name="BtnDBopen" 
-                    Style="{StaticResource BtnWorkBtn}" VerticalAlignment="Bottom" Click="BtnDBopenClick" />
-
         </Grid>
 
         <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="8,0" 
-              Name="GridLog" Background="#FFF3EFEF" HorizontalAlignment="Stretch" >
+              Name="GridLog" HorizontalAlignment="Stretch" >
             <Grid.RowDefinitions>
                 <RowDefinition Height="90"/>
+
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="600"/>
-                <ColumnDefinition Width="200*"/>
+                <ColumnDefinition Width="6*"/>
+                <ColumnDefinition Width="2*"/>
             </Grid.ColumnDefinitions>
 
-            <Rectangle Grid.Row="0" Grid.Column="1"  Style="{StaticResource ResourceKey=StRect}" 
-                       Width="200" Margin="0,0,0,0" HorizontalAlignment="Right" />
-            <TextBox  Grid.Row="0" Grid.Column="0"  x:Name="TxtResult"  HorizontalAlignment="Left" 
-                      Margin="0" TextWrapping="Wrap" Width="600" Height="90" VerticalAlignment="Top" 
-                IsReadOnly="True" VerticalScrollBarVisibility="Visible" Text="Инициализация..." 
-                      Foreground="#FFFBF8F8" Background="#FF383636"  />
+            <ListBox Grid.Row="0" Grid.Column="0"  
+                      ItemsSource="{Binding ConsoleLines}" 
+                      IsEnabled="False" 
+                      Background="{StaticResource ListBoxBackgroundBrush}">
+                <ListBox.ItemTemplate >
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                            <TextBox Text="{Binding Path=}" Foreground="{StaticResource ProgressBarForegroundBrush}" IsReadOnly="True" HorizontalAlignment="Stretch" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            
+            <!--<TextBox  Grid.Row="0" Grid.Column="0"  Foreground="{StaticResource ProgressBarForegroundBrush}"
+                      x:Name="TxtResult"  
+                      HorizontalAlignment="Stretch" 
+                      Margin="0" 
+                      TextWrapping="Wrap" 
+                      Height="90" 
+                      VerticalAlignment="Stretch" 
+                      IsReadOnly="True" VerticalScrollBarVisibility="Visible" 
+                      Text="{Binding Console}" 
+                      />-->
             <ProgressBar Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" Height="28" 
                          Margin="0,20,40,0" VerticalAlignment="Top" Width="130" x:Name="ProgressBar" Background="#FF726D6D"/>
             <Button Grid.Row="0" Grid.Column="1" Content="Отмена" 
@@ -251,7 +220,7 @@
                         x:Name="BtnCancel" 
                         Click="BtnCancelClick" 
                         IsEnabled="False"
-                        Style="{StaticResource BtnWorkBtn}"/>
+                        />
             <Label Grid.Row="0" Grid.Column="1" Content="Ожидание..." HorizontalAlignment="Right" 
                    Height="28" Margin="0,20,40,0" VerticalAlignment="Top" Width="130" 
                    HorizontalContentAlignment="Center" x:Name="LabelProcess"/>
@@ -260,15 +229,16 @@
         <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Height="40" 
                     Orientation="Horizontal" Margin="10,0"  >
             <Button Content="Merge"  Margin="0,0" VerticalAlignment="Center" 
-                    Height="24" Width="55" Name="BtnTestCode" Click="BtnTestCodeClick" 
-                    Style="{StaticResource BtnWorkBtn}"/>
+                    Height="24"  Name="BtnTestCode" Click="BtnTestCodeClick" 
+                    />
             <Button Content="S7 Code"  Margin="10,0" VerticalAlignment="Center" 
-                    Height="24" Width="55" x:Name="BtnS7Code" Click="BtnS7CodeClick"
-                    Style="{StaticResource BtnWorkBtn}"/>
+                    Height="24"  x:Name="BtnS7Code" 
+                    Command="{Binding SerializeTableCommand}"
+                    />
             <Button Content="Del lists" x:Name="BtnDelLists"  
                     Margin="10,0" VerticalAlignment="Center" 
-                    Height="24" Width="55" Click="BtnDelListsClick"
-                    Style="{StaticResource BtnWorkBtn}"/>
+                    Height="24"  Click="BtnDelListsClick"
+                    />
         </StackPanel>
 
     </Grid>

@@ -3,6 +3,45 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Themes/MetroDark/MetroDark.MSControls.Core.Implicit.xaml" />
+                <ResourceDictionary Source="Themes/MetroDark/MetroDark.MSControls.Toolkit.Implicit.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+        
+        <!--<LinearGradientBrush x:Key="Buttongradient" StartPoint="0.500023,0.999996" EndPoint="0.500023,4.37507e-006">
+            <GradientStop Color="#171717" Offset="1" />
+            <GradientStop Color="#0b0b0b" Offset="0" />
+        </LinearGradientBrush>
+
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="Black" />
+        </Style>
+
+        <Style TargetType="Label">
+            <Setter Property="Foreground" Value="WhiteSmoke" />
+        </Style>
+
+        <Style x:Key="StRect" TargetType="Rectangle" >
+            <Setter Property="Fill" Value="{DynamicResource Buttongradient}" />
+            <Setter Property="Stroke" Value="Black" />
+            <Setter Property="Margin" Value="1"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="Opacity" Value="0.3" />
+
+        </Style>
+
+        <Style x:Key="BtnWorkBtn" TargetType="Button">
+            <Setter Property="Height" Value="32" />
+            <Setter Property="Width" Value="120" />
+            <Setter Property="Margin" Value="4" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
+            <Setter Property="Background" Value="{DynamicResource Buttongradient}"/>
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+
+        </Style>-->
     </Application.Resources>
 </Application>

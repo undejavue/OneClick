@@ -19,7 +19,7 @@ namespace OneClickUI.Dialogs
             InitializeComponent();
 
             resultText = new List<string>(outputText);
-            rootdir = Globals.get_RootDir();
+           // rootdir = Globals.get_RootDir();
 
             Loaded += dialog_outBuffer_Loaded;
         }

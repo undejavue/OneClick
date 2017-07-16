@@ -10,6 +10,7 @@ using Microsoft.Win32;
 using OneClickUI.Dialogs;
 using OneClickUI.Excel;
 using OneClickUI.ViewModels;
+using OneClickUI.Views;
 
 namespace OneClickUI
 {
@@ -24,20 +25,20 @@ namespace OneClickUI
         private ObservableCollection<CategoryModel> categories;
         private SourceGenerator sources;
         private ExcelWorks exWorks;
-        private dialog_categories wndCategories;
+        //private CategoriesView _wndCategoriesView;
         private readonly BackgroundWorker bgWorker;
 
         // Globals properties class
-        public Globals G;
+        //public Globals G;
 
         public MainWindow()
         {
             InitializeComponent();
-            viewModel = new MainViewModel();
+            DataContext = viewModel = new MainViewModel();
 
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
-            categories = new ObservableCollection<CategoryModel>();
+            //categories = new ObservableCollection<CategoryModel>();
 
 
             // Acync worker for continuous operation
@@ -49,7 +50,7 @@ namespace OneClickUI
             bgWorker.WorkerSupportsCancellation = true;
 
             //txt_filename.DataContext = global_FileName;
-            OneClickSetGlobals();
+            //OneClickSetGlobals();
         }
 
         //----- Асинхронное выполнение основных операций ------------------------------
@@ -80,8 +81,8 @@ namespace OneClickUI
         private void BgWorkerProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             this.ProgressBar.Value = e.ProgressPercentage;
-            this.TxtResult.AppendText("\r\n" + DateTime.Now.ToString("h:mm:ss") + ": " + e.UserState.ToString());
-            this.TxtResult.ScrollToEnd();
+            //this.TxtResult.AppendText("\r\n" + DateTime.Now.ToString("h:mm:ss") + ": " + e.UserState.ToString());
+            //this.TxtResult.ScrollToEnd();
 
             LabelProcess.Content = "Выполняется...";
         }
@@ -116,12 +117,12 @@ namespace OneClickUI
         //--- Конфигурация опций интерфейса
         private void OneClickSetGlobals()
         {
-            G = new Globals();
+            //G = new Globals();
 
-            G.rootdir = "D:\\OneClickDB";
+            //G.rootdir = "D:\\OneClickDB";
 
-            GridFileOperations.DataContext = G;
-            GridDbOperations.DataContext = G;
+            //GridFileOperations.DataContext = G;
+            //GridDbOperations.DataContext = G;
 
         }
 
@@ -129,21 +130,11 @@ namespace OneClickUI
         //--- Загрузка файла конфигурации
         private void BtnExcelOpenClick(object sender, RoutedEventArgs e)
         {
-            if (exWorks == null)
-            {
-                exWorks = new ExcelWorks(G.rootdir);
-                exWorks.ReportMessage += ExWorksReportMessage;
-            }
-
-            G.rootdir = exWorks.OpenExcel();
-
             BtnTblAdapt.IsEnabled = true;
             BtnOperations.IsEnabled = true;
             BtnGenSource.IsEnabled = true;
-            BtnSave.IsEnabled = true;
-            BtnClose.IsEnabled = true;
-
-            G.filename = exWorks.fileName;
+            //BtnSave.IsEnabled = true;
+            //BtnClose.IsEnabled = true;
         }
 
         private void ExWorksReportMessage(object sender, OneClickEventArgs args)
@@ -154,7 +145,7 @@ namespace OneClickUI
             }
             else
             {
-                this.TxtResult.AppendText("\r\n" + DateTime.Now.ToString("h:mm:ss") + ": " + args.Message);
+                //this.TxtResult.AppendText("\r\n" + DateTime.Now.ToString("h:mm:ss") + ": " + args.Message);
             }
         }
 
@@ -171,7 +162,7 @@ namespace OneClickUI
                 bgWorker.RunWorkerAsync(arg);
 
                 BtnCancel.IsEnabled = true;
-                exWorks.SetVisible(G.isExcelVisible);
+                //exWorks.SetVisible(G.isExcelVisible);
             }
             else
                 MessageBox.Show("Уже идет выполнение фоновой операции");
@@ -180,17 +171,22 @@ namespace OneClickUI
         //--- Задание категорий для коллекции
         private void BtnSetCategoriesClick(object sender, RoutedEventArgs e)
         {
-            wndCategories = new dialog_categories(categories);
-            wndCategories.Show();
-            G.categoriesCount = categories.Count;
+            //_wndCategoriesView = new CategoriesView(categories);
+            //_wndCategoriesView.Show();
+            //G.categoriesCount = categories.Count;
 
-            wndCategories.btn_SaveChanges.Click += wnd_Categories_SaveChanges_Click;
+            //_wndCategoriesView.btn_SaveChanges.Click += wnd_Categories_SaveChanges_Click;
+            //var wnd = new CategoriesView();
+            //wnd.Closed += delegate { };
+
+            //wnd.ShowDialog();
+
         }
 
         private void wnd_Categories_SaveChanges_Click(object sender, RoutedEventArgs e)
         {
-            categories = new ObservableCollection<CategoryModel>(wndCategories.categories);
-            G.categoriesCount = categories.Count;
+            //categories = new ObservableCollection<CategoryModel>(_wndCategoriesView.categories);
+            //G.categoriesCount = categories.Count;
         }
 
 
@@ -206,7 +202,7 @@ namespace OneClickUI
                 bgWorker.RunWorkerAsync(arg);
 
                 BtnCancel.IsEnabled = true;
-                exWorks.SetVisible(G.isExcelVisible);
+                //exWorks.SetVisible(G.isExcelVisible);
             }
             else
                 MessageBox.Show("Уже идет выполнение фоновой операции");
@@ -236,15 +232,15 @@ namespace OneClickUI
         //--- Сохранить и закрыть файл конфигурации
         private void BtnSaveClick(object sender, RoutedEventArgs e)
         {
-            exWorks.CloseExcel(true);
-            G.filename = "";
+            //exWorks.CloseExcel(true);
+            //G.filename = "";
         }
 
         //--- Закрыть файл конфигурации
         private void BtnCloseClick(object sender, RoutedEventArgs e)
         {
-            exWorks.CloseExcel(false);
-            G.filename = "";
+            //exWorks.CloseExcel(false);
+            //G.filename = "";
         }
 
         //--- Создать базу данных
@@ -415,11 +411,11 @@ namespace OneClickUI
             }
 
             bgWorker.ReportProgress(40, "Старт генерации source-файлов...");
-            if ((G.sourcedir == null) | (G.sourcedir == ""))
-                G.sourcedir = Environment.CurrentDirectory;
+            //if ((G.sourcedir == null) | (G.sourcedir == ""))
+            //    G.sourcedir = Environment.CurrentDirectory;
             sources.SetPeripheryFields();
 
-            sources.PrintAllSourcesToFiles(G.sourcedir);
+            //sources.PrintAllSourcesToFiles(G.sourcedir);
 
             bgWorker.ReportProgress(90, "Генерация source-файлов завершена");
 
@@ -484,7 +480,7 @@ namespace OneClickUI
         /// </summary>
         private void OneClickDbOpen()
         {
-            var dir = G.rootdir;
+            var dir = "RootDir";//G.rootdir;
             var filename = "";
 
             var openDlg = new OpenFileDialog();
@@ -507,7 +503,7 @@ namespace OneClickUI
                 dir = filename.Remove(filename.Length - safename.Length - 1);
 
 
-                G.DBfilename = filename;
+                //G.DBfilename = filename;
 
                 var frameView = new MainFramesView(filename);
                 frameView.Show();
@@ -579,8 +575,9 @@ namespace OneClickUI
         //----- Второстепенные и вспомогательные функции и операции
         public void Print2Result(string s)
         {
-            TxtResult.AppendText("\r\n" + DateTime.Now.ToString("h:mm:ss") + ": " + s);
-            TxtResult.ScrollToEnd();
+            //TxtResult.AppendText("\r\n" + DateTime.Now.ToString("h:mm:ss") + ": " + s);
+            //TxtResult.ScrollToEnd();
+            viewModel.ConsoleWrite(s);
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
@@ -629,7 +626,8 @@ namespace OneClickUI
 
             //s7.S7testCode();
 
-            viewModel.SerializeTableCommand.Execute(G.filename);
+
+            //viewModel.SerializeTableCommand.Execute(RootDir);
             
         }
 

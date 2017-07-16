@@ -204,7 +204,7 @@ namespace ClassLibrary.Models
         /// </summary>
         public ObservableCollection <BaseEntityModel> PeripheryCode { get; set; }
 
-        public CategoryModel CategoryModel { get; set; }
+        public virtual CategoryModel CategoryModel { get; set; }
 
         public SymbolTableItemModel()
         {
