@@ -9,6 +9,7 @@ using ClassLibrary.Models;
 using OneClickUI.Helpers;
 using ClassLibrary.Excel;
 using ClassLibrary.Services;
+using OneClickUI.Log;
 using OneClickUI.Views;
 
 namespace OneClickUI.ViewModels
@@ -26,21 +27,26 @@ namespace OneClickUI.ViewModels
 
         public ObservableRangeCollection<CategoryModel> Categories { get; set; }
 
-        public ObservableCollection<string> ConsoleLines { get; set; }
-        
+        public ObservableCollection<LogEntryModel> LogItems { get; set; }
+
+        public ObservableCollection<LogTagModel> LogFIlter { get; set; }
+
         public ICommand SerializeTableCommand { get; set; }
         public ICommand CategoriesCommand { get; set; }
         public ICommand FileSelectCommand { get; set; }
+        public ICommand FilterLogCommand { get; set; }
 
 
         public MainViewModel()
         {
             Categories = new ObservableRangeCollection<CategoryModel>();
+
             SerializeTableCommand = new RelayCommand(async obj => await ExecuteSerializeTableCommand(RootDirectory));
             CategoriesCommand = new RelayCommand(obj =>
             {
                 CategoriesView view = new CategoriesView(Categories);
                 view.ShowDialog();
+                ConsoleWrite("Созданы категории сортировки...");
             });
 
             FileSelectCommand = new RelayCommand(obj =>
@@ -49,14 +55,51 @@ namespace OneClickUI.ViewModels
                 ConsoleWrite("Задан файл конфигурации...");
             });
 
-            ConsoleLines = new ObservableCollection<string>();
+            FilterLogCommand = new RelayCommand(ExecuteFilterLogCommand);
+
+            LogItems = new ObservableCollection<LogEntryModel>();
+            LogFIlter = new ObservableCollection<LogTagModel>();
+            InitFilter();
             ConsoleWrite("Initialized...");
             RootDirectory = Environment.CurrentDirectory;
         }
 
+        private void InitFilter()
+        {
+            LogFIlter.Add(new LogTagModel(LogTag.All));
+            LogFIlter.Add(new LogTagModel(LogTag.Debug));
+            LogFIlter.Add(new LogTagModel(LogTag.Error));
+            LogFIlter.Add(new LogTagModel(LogTag.Info));
+            LogFIlter.Add(new LogTagModel(LogTag.Warning));
+        }
+
+        private void ExecuteFilterLogCommand(object obj)
+        {
+            var filter = obj as string;
+            if (filter != null && filter.Equals(LogTag.All.ToString()))
+            {
+                foreach (var filterItem in LogFIlter)
+                {
+                    filterItem.IsSelected = true;
+                }
+            }
+            else
+            {
+                foreach (var filterItem in LogFIlter)
+                {
+                    filterItem.IsSelected = filterItem.Name.Equals(filter);
+                }
+            }
+
+            foreach (var item in LogItems)
+            {
+                item.IsVisible = LogFIlter.Count <= 0 || LogFIlter.Where(x=>x.IsSelected).Contains(item.Tag);
+            }
+        }
+
         public void ConsoleWrite(string line)
         {
-            ConsoleLines.Add(Environment.NewLine + DateTime.Now.ToString("h:mm:ss") + ": " + line);
+            LogItems.Add(new LogEntryModel(LogTag.Debug, line));
         }
 
         private async Task ExecuteSerializeTableCommand(object param)
@@ -85,6 +128,8 @@ namespace OneClickUI.ViewModels
                 ExcelDataWriter.WriteExcelFromArray(filename, SymbolTable.GetSymbolsArray(), "SymbolTable");
 
             }).ConfigureAwait(false);
+
+            ConsoleWrite("Table is serialized");
         }
     }
 }

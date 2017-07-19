@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Drawing.Printing;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using ClassLibrary.Models;
 using ClassLibrary.SourceGenerator;
 using Microsoft.Win32;
@@ -40,6 +42,13 @@ namespace OneClickUI
 
             //categories = new ObservableCollection<CategoryModel>();
 
+            foreach (var item in viewModel.LogFIlter)
+            {
+                Button btn = new Button {Content = item.Name,  Command = viewModel.FilterLogCommand };
+                btn.CommandParameter = btn.Content;
+                btn.Click += (sender, args) => { item.IsSelected = !item.IsSelected; };
+                PanelLogFilter.Children.Add(btn);
+            }
 
             // Acync worker for continuous operation
             bgWorker = new BackgroundWorker();

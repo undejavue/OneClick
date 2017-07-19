@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:OneClickUI.ViewModels"
+        xmlns:extenders="clr-namespace:OneClickUI.Extenders"
         mc:Ignorable="d"
         Title="OneClick Automation" Width="836" Height="620"
         ResizeMode="NoResize" 
@@ -71,8 +72,8 @@
 
             <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
                 <Label Content="Шаг 1. Задать категории сортировки" VerticalContentAlignment="Center" />
-                <TextBox Name="TxtCategoriesCount" Text="{Binding Categories.Count, Mode=OneWay}" Margin="20,0" 
-                         MinWidth="30" Height="20" IsReadOnly="True" />
+                <!--<TextBox Name="TxtCategoriesCount" Text="{Binding Categories.Count, Mode=OneWay}" Margin="20,0" 
+                         MinWidth="30" Height="20" IsReadOnly="True" />-->
             </StackPanel>
             <Button Grid.Row="0" Grid.Column="1" Content="Категории" Margin="8"
                     x:Name="BtnSetCategories" Command="{Binding CategoriesCommand}" CommandParameter="{Binding RootDirectory}"
@@ -182,7 +183,7 @@
               Name="GridLog" HorizontalAlignment="Stretch" >
             <Grid.RowDefinitions>
                 <RowDefinition Height="90"/>
-
+                <RowDefinition Height="36"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="6*"/>
@@ -190,13 +191,15 @@
             </Grid.ColumnDefinitions>
 
             <ListBox Grid.Row="0" Grid.Column="0"  
-                      ItemsSource="{Binding ConsoleLines}" 
-                      IsEnabled="False" 
+                      ItemsSource="{Binding LogItems}" 
+                      IsEnabled="False" extenders:ListBoxExtender.AutoScrollToEnd="True"  
                       Background="{StaticResource ListBoxBackgroundBrush}">
-                <ListBox.ItemTemplate >
+
+                <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
-                            <TextBox Text="{Binding Path=}" Foreground="{StaticResource ProgressBarForegroundBrush}" IsReadOnly="True" HorizontalAlignment="Stretch" />
+                        <StackPanel Orientation="Horizontal" Visibility="{Binding IsVisible}">
+                            <TextBlock Text="{Binding Path=Tag}" Width="64" Foreground="#FF5579C7" FontWeight="Bold"/>
+                            <TextBlock Text="{Binding Path=Entry}" TextWrapping="Wrap" />
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
@@ -224,6 +227,7 @@
             <Label Grid.Row="0" Grid.Column="1" Content="Ожидание..." HorizontalAlignment="Right" 
                    Height="28" Margin="0,20,40,0" VerticalAlignment="Top" Width="130" 
                    HorizontalContentAlignment="Center" x:Name="LabelProcess"/>
+            <StackPanel x:Name="PanelLogFilter" Grid.Row="1" Grid.Column="0" Orientation="Horizontal"/>
         </Grid>
 
         <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Height="40" 

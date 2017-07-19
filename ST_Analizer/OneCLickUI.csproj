@@ -103,10 +103,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Extenders\ListBoxExtender.cs" />
     <Compile Include="FileManager.cs" />
     <Compile Include="Helpers\ObservableObject.cs" />
     <Compile Include="Helpers\ObservableRangeCollection.cs" />
     <Compile Include="Helpers\RelayCommand.cs" />
+    <Compile Include="Log\LogEntryModel.cs" />
+    <Compile Include="Log\LogTagModel.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\CategoriesViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
