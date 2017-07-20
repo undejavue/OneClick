@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
-using System.Data.OleDb;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using ClassLibrary.Excel;
 using ClassLibrary.Models;
-using Newtonsoft.Json;
-using DocumentFormat.OpenXml;
 
 namespace ClassLibrary.Services
 {
@@ -18,10 +11,10 @@ namespace ClassLibrary.Services
 
         public static DataTable GenerateTableFromExcel(string pathToExcel)
         {
-            var path = @"s:\OneClickDb\PLC1.xlsx";
+            //var path = @"s:\OneClickDb\PLC1.xlsx";
 
             var dt = new DataTable();
-            using (var reader = new ExcelDataReader(path))
+            using (var reader = new ExcelDataReader(pathToExcel))
             {
                 dt.Load(reader);
                 return dt;

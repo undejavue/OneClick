@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Drawing.Printing;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using ClassLibrary.Models;
 using ClassLibrary.SourceGenerator;
 using Microsoft.Win32;
 using OneClickUI.Dialogs;
-using OneClickUI.Excel;
 using OneClickUI.ViewModels;
 using OneClickUI.Views;
 
@@ -24,11 +19,11 @@ namespace OneClickUI
         private MainViewModel viewModel;
 
 
-        private ObservableCollection<CategoryModel> categories;
-        private SourceGenerator sources;
-        private ExcelWorks exWorks;
+        //private ObservableCollection<CategoryModel> categories;
+        //private SourceGenerator sources;
+        //private ExcelWorks exWorks;
         //private CategoriesView _wndCategoriesView;
-        private readonly BackgroundWorker bgWorker;
+        //private readonly BackgroundWorker bgWorker;
 
         // Globals properties class
         //public Globals G;
@@ -44,19 +39,19 @@ namespace OneClickUI
 
             foreach (var item in viewModel.LogFIlter)
             {
-                Button btn = new Button {Content = item.Name,  Command = viewModel.FilterLogCommand };
+                Button btn = new Button {Content = item.Name,  Command = viewModel.FilterLogCommand, FontSize = 12};
                 btn.CommandParameter = btn.Content;
                 btn.Click += (sender, args) => { item.IsSelected = !item.IsSelected; };
                 PanelLogFilter.Children.Add(btn);
             }
 
             // Acync worker for continuous operation
-            bgWorker = new BackgroundWorker();
-            bgWorker.DoWork += BgWorkerDoWork;
-            bgWorker.RunWorkerCompleted += BgWorkerRunWorkerCompleted;
-            bgWorker.ProgressChanged += BgWorkerProgressChanged;
-            bgWorker.WorkerReportsProgress = true;
-            bgWorker.WorkerSupportsCancellation = true;
+            //bgWorker = new BackgroundWorker();
+            //bgWorker.DoWork += BgWorkerDoWork;
+            //bgWorker.RunWorkerCompleted += BgWorkerRunWorkerCompleted;
+            //bgWorker.ProgressChanged += BgWorkerProgressChanged;
+            //bgWorker.WorkerReportsProgress = true;
+            //bgWorker.WorkerSupportsCancellation = true;
 
             //txt_filename.DataContext = global_FileName;
             //OneClickSetGlobals();
@@ -64,37 +59,37 @@ namespace OneClickUI
 
         //----- Асинхронное выполнение основных операций ------------------------------
 
-        private void BgWorkerDoWork(object sender, DoWorkEventArgs e)
-        {
-            var arg = (BaseEntityModel)e.Argument;
+        //private void BgWorkerDoWork(object sender, DoWorkEventArgs e)
+        //{
+        //    var arg = (BaseEntityModel)e.Argument;
 
-            switch (arg.Id)
-            {
-                case 1:
-                    OneClickTableAdaptation(e);
-                    break;
-                case 2:
-                    OneClickTableToCollection(e);
-                    break;
-                case 3:
-                    OneClickSourceGenerator(e);
-                    break;
-                case 4:
-                    //OneClickDbCreate(e);
-                    break;
-                default:
-                    break;
-            }
-        }
+        //    switch (arg.Id)
+        //    {
+        //        case 1:
+        //            OneClickTableAdaptation(e);
+        //            break;
+        //        case 2:
+        //            OneClickTableToCollection(e);
+        //            break;
+        //        case 3:
+        //            OneClickSourceGenerator(e);
+        //            break;
+        //        case 4:
+        //            //OneClickDbCreate(e);
+        //            break;
+        //        default:
+        //            break;
+        //    }
+        //}
 
-        private void BgWorkerProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            this.ProgressBar.Value = e.ProgressPercentage;
-            //this.TxtResult.AppendText("\r\n" + DateTime.Now.ToString("h:mm:ss") + ": " + e.UserState.ToString());
-            //this.TxtResult.ScrollToEnd();
+        //private void BgWorkerProgressChanged(object sender, ProgressChangedEventArgs e)
+        //{
+        //    this.ProgressBar.Value = e.ProgressPercentage;
+        //    //this.TxtResult.AppendText("\r\n" + DateTime.Now.ToString("h:mm:ss") + ": " + e.UserState.ToString());
+        //    //this.TxtResult.ScrollToEnd();
 
-            LabelProcess.Content = "Выполняется...";
-        }
+        //    LabelProcess.Content = "Выполняется...";
+        //}
 
         private void BgWorkerRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
@@ -117,7 +112,7 @@ namespace OneClickUI
             BtnCancel.IsEnabled = false;
             BtnGenSource.IsEnabled = true;
 
-            exWorks.SetVisible(true);
+            //exWorks.SetVisible(true);
         }
 
         //----- Интерфейс основных операций  -----------------------------------------
@@ -146,36 +141,36 @@ namespace OneClickUI
             //BtnClose.IsEnabled = true;
         }
 
-        private void ExWorksReportMessage(object sender, OneClickEventArgs args)
-        {
-            if (bgWorker.IsBusy)
-            {
-                bgWorker.ReportProgress(50, args.Message);
-            }
-            else
-            {
-                //this.TxtResult.AppendText("\r\n" + DateTime.Now.ToString("h:mm:ss") + ": " + args.Message);
-            }
-        }
+        //private void ExWorksReportMessage(object sender, OneClickEventArgs args)
+        //{
+        //    if (bgWorker.IsBusy)
+        //    {
+        //        bgWorker.ReportProgress(50, args.Message);
+        //    }
+        //    else
+        //    {
+        //        //this.TxtResult.AppendText("\r\n" + DateTime.Now.ToString("h:mm:ss") + ": " + args.Message);
+        //    }
+        //}
 
 
-        //--- Первоначальная обработка таблицы
-        private void BtnTableAdaptationClick(object sender, RoutedEventArgs e)
-        {
-            if (!bgWorker.IsBusy)
-            {
-                var arg = new BaseEntityModel();
-                arg.Id = 1;
-                arg.Name = "Analyse";
-                arg.Description = "Анализ таблицы сигналов";
-                bgWorker.RunWorkerAsync(arg);
+        ////--- Первоначальная обработка таблицы
+        //private void BtnTableAdaptationClick(object sender, RoutedEventArgs e)
+        //{
+        //    if (!bgWorker.IsBusy)
+        //    {
+        //        var arg = new BaseEntityModel();
+        //        arg.Id = 1;
+        //        arg.Name = "Analyse";
+        //        arg.Description = "Анализ таблицы сигналов";
+        //        bgWorker.RunWorkerAsync(arg);
 
-                BtnCancel.IsEnabled = true;
-                //exWorks.SetVisible(G.isExcelVisible);
-            }
-            else
-                MessageBox.Show("Уже идет выполнение фоновой операции");
-        }
+        //        BtnCancel.IsEnabled = true;
+        //        //exWorks.SetVisible(G.isExcelVisible);
+        //    }
+        //    else
+        //        MessageBox.Show("Уже идет выполнение фоновой операции");
+        //}
 
         //--- Задание категорий для коллекции
         private void BtnSetCategoriesClick(object sender, RoutedEventArgs e)
@@ -200,42 +195,42 @@ namespace OneClickUI
 
 
         //--- Создание коллекции из таблицы и работа с ней
-        private void BtnOperationsClick(object sender, RoutedEventArgs e)
-        {
-            if (!bgWorker.IsBusy)
-            {
-                var arg = new BaseEntityModel();
-                arg.Id = 2;
-                arg.Name = "Categorize";
-                arg.Description = "Сортировка сигналов по таблицам категорий";
-                bgWorker.RunWorkerAsync(arg);
+        //private void BtnOperationsClick(object sender, RoutedEventArgs e)
+        //{
+        //    if (!bgWorker.IsBusy)
+        //    {
+        //        var arg = new BaseEntityModel();
+        //        arg.Id = 2;
+        //        arg.Name = "Categorize";
+        //        arg.Description = "Сортировка сигналов по таблицам категорий";
+        //        bgWorker.RunWorkerAsync(arg);
 
-                BtnCancel.IsEnabled = true;
-                //exWorks.SetVisible(G.isExcelVisible);
-            }
-            else
-                MessageBox.Show("Уже идет выполнение фоновой операции");
-        }
+        //        BtnCancel.IsEnabled = true;
+        //        //exWorks.SetVisible(G.isExcelVisible);
+        //    }
+        //    else
+        //        MessageBox.Show("Уже идет выполнение фоновой операции");
+        //}
 
         //--- Генерация файлов исходного кода для PLC-программы
-        private void BtnGenSourceClick(object sender, RoutedEventArgs e)
-        {
-            if (!bgWorker.IsBusy)
-            {
-                var arg = new BaseEntityModel();
-                arg.Id = 3;
-                arg.Name = "GenerateSources";
-                arg.Description = "Генерация текстов исходных кодов";
-                bgWorker.RunWorkerAsync(arg);
-            }
-            else
-                MessageBox.Show("Уже идет выполнение фоновой операции");
-        }
+        //private void BtnGenSourceClick(object sender, RoutedEventArgs e)
+        //{
+        //    if (!bgWorker.IsBusy)
+        //    {
+        //        var arg = new BaseEntityModel();
+        //        arg.Id = 3;
+        //        arg.Name = "GenerateSources";
+        //        arg.Description = "Генерация текстов исходных кодов";
+        //        bgWorker.RunWorkerAsync(arg);
+        //    }
+        //    else
+        //        MessageBox.Show("Уже идет выполнение фоновой операции");
+        //}
 
         //--- Отмена выполнения фоновых операций
         private void BtnCancelClick(object sender, RoutedEventArgs e)
         {
-            bgWorker.CancelAsync();
+            //bgWorker.CancelAsync();
         }
 
         //--- Сохранить и закрыть файл конфигурации
@@ -286,119 +281,119 @@ namespace OneClickUI
         /// из символьного имени сигнала и комментария, сортировка таблицы
         /// </summary>
         /// <param name="e">Параметры асинхронного обработчика</param>
-        private void OneClickTableAdaptation(DoWorkEventArgs e)
-        {
-            exWorks.Excel_backupSheet("SymbolTable");
-            bgWorker.ReportProgress(5, "Резервная копия таблицы создана");
+        //private void OneClickTableAdaptation(DoWorkEventArgs e)
+        //{
+        //    exWorks.Excel_backupSheet("SymbolTable");
+        //    bgWorker.ReportProgress(5, "Резервная копия таблицы создана");
 
-            if (bgWorker.CancellationPending)
-            {
-                e.Cancel = true;
-                return;
-            }
+        //    if (bgWorker.CancellationPending)
+        //    {
+        //        e.Cancel = true;
+        //        return;
+        //    }
 
-            var symbolTableModel = new SymbolTableModel(exWorks.Generate_ArrayFromRange("SymbolTable", true));
-            bgWorker.ReportProgress(30, "Таблица прочитана в память");
+        //    var symbolTableModel = new SymbolTableModel(exWorks.Generate_ArrayFromRange("SymbolTable", true));
+        //    bgWorker.ReportProgress(30, "Таблица прочитана в память");
 
-            if (bgWorker.CancellationPending)
-            {
-                e.Cancel = true;
-                return;
-            }
+        //    if (bgWorker.CancellationPending)
+        //    {
+        //        e.Cancel = true;
+        //        return;
+        //    }
 
-            symbolTableModel.AnalyseAndSetTags();
-            bgWorker.ReportProgress(60, "Анализ символьных имен выполнен");
+        //    symbolTableModel.AnalyseAndSetTags();
+        //    bgWorker.ReportProgress(60, "Анализ символьных имен выполнен");
 
-            if (bgWorker.CancellationPending)
-            {
-                e.Cancel = true;
-                return;
-            }
+        //    if (bgWorker.CancellationPending)
+        //    {
+        //        e.Cancel = true;
+        //        return;
+        //    }
 
-            symbolTableModel.SortTable();
-            bgWorker.ReportProgress(70, "Сортировка выполнена");
+        //    symbolTableModel.SortTable();
+        //    bgWorker.ReportProgress(70, "Сортировка выполнена");
 
-            if (bgWorker.CancellationPending)
-            {
-                e.Cancel = true;
-                return;
-            }
+        //    if (bgWorker.CancellationPending)
+        //    {
+        //        e.Cancel = true;
+        //        return;
+        //    }
 
-            var arr = symbolTableModel.GetSymbolsArray();
-            exWorks.PrintArrayToSheet(arr, "SymbolTable");
-            bgWorker.ReportProgress(98, "Таблица выгружена в Excel");
+        //    var arr = symbolTableModel.GetSymbolsArray();
+        //    exWorks.PrintArrayToSheet(arr, "SymbolTable");
+        //    bgWorker.ReportProgress(98, "Таблица выгружена в Excel");
 
-            symbolTableModel.ClearSymbols();
+        //    symbolTableModel.ClearSymbols();
 
-            e.Result = new BaseEntityModel(1, "Выполнено!", "Первичная обработка таблицы выполнена");
-        }
+        //    e.Result = new BaseEntityModel(1, "Выполнено!", "Первичная обработка таблицы выполнена");
+        //}
 
         /// <summary>
         /// Формирование в памяти коллекции символьных списков,
         /// из исходной таблицы по заданным категориям и ключам
         /// </summary>
         /// <param name="e"></param>
-        private void OneClickTableToCollection(DoWorkEventArgs e)
-        {
-            exWorks.Excel_backupSheet("SymbolTable");
-            bgWorker.ReportProgress(10, "Запуск цикла сортировки таблицы по категориям...");
+        //private void OneClickTableToCollection(DoWorkEventArgs e)
+        //{
+        //    exWorks.Excel_backupSheet("SymbolTable");
+        //    bgWorker.ReportProgress(10, "Запуск цикла сортировки таблицы по категориям...");
 
-            if (categories.Count > 0)
-            {
-                var unsortedTableModel = new SymbolTableModel(exWorks.Generate_ArrayFromRange("SymbolTable", true));
-                bgWorker.ReportProgress(40, "Таблица загружена в память");
+        //    if (categories.Count > 0)
+        //    {
+        //        var unsortedTableModel = new SymbolTableModel(exWorks.Generate_ArrayFromRange("SymbolTable", true));
+        //        bgWorker.ReportProgress(40, "Таблица загружена в память");
 
 
-                foreach (var cat in categories)
-                {
-                    if (bgWorker.CancellationPending)
-                    {
-                        e.Cancel = true;
-                        return;
-                    }
+        //        foreach (var cat in categories)
+        //        {
+        //            if (bgWorker.CancellationPending)
+        //            {
+        //                e.Cancel = true;
+        //                return;
+        //            }
 
-                    var list = new List<string>();
-                    foreach (var k in cat.Keys)
-                    {
-                        if (bgWorker.CancellationPending)
-                        {
-                            e.Cancel = true;
-                            return;
-                        }
+        //            var list = new List<string>();
+        //            foreach (var k in cat.Keys)
+        //            {
+        //                if (bgWorker.CancellationPending)
+        //                {
+        //                    e.Cancel = true;
+        //                    return;
+        //                }
 
-                        list.Add(k.Name);
-                    }
-                    cat.AddCollection(unsortedTableModel.ExtractListByKeys(list));
-                }
-                bgWorker.ReportProgress(70, "Выполнена сортировка таблицы по ключам и категориям");
+        //                list.Add(k.Name);
+        //            }
+        //            cat.AddCollection(unsortedTableModel.ExtractListByKeys(list));
+        //        }
+        //        bgWorker.ReportProgress(70, "Выполнена сортировка таблицы по ключам и категориям");
 
-                // Корректировка номеров блоков данных для PID
-                OneClickCorrectPiDs();
+        //        // Корректировка номеров блоков данных для PID
+        //        OneClickCorrectPiDs();
 
-                foreach (var category in categories)
-                {
-                    if (bgWorker.CancellationPending)
-                    {
-                        e.Cancel = true;
-                        return;
-                    }
+        //        foreach (var category in categories)
+        //        {
+        //            if (bgWorker.CancellationPending)
+        //            {
+        //                e.Cancel = true;
+        //                return;
+        //            }
 
-                    category.SortCollectionByCodename();
-                    exWorks.PrintArrayToSheetTemplate(category.GetSymbolsArrayEx(), category.Name);
-                }
+        //            category.SortCollectionByCodename();
+        //            exWorks.PrintArrayToSheetTemplate(category.GetSymbolsArrayEx(), category.Name);
+        //        }
 
-                exWorks.PrintArrayToSheet(unsortedTableModel.GetSymbolsArray(), "unSorTed");
+        //        exWorks.PrintArrayToSheet(unsortedTableModel.GetSymbolsArray(), "unSorTed");
 
-                bgWorker.ReportProgress(99, "Выполнена выгрузка категорий в Excel");
+        //        bgWorker.ReportProgress(99, "Выполнена выгрузка категорий в Excel");
 
-                e.Result = new BaseEntityModel(2, "Выполнено!", "Таблица  сигналов отсортирована и обработана");
-            }
-            else
-            {
-                MessageBox.Show("Не заданы категории для обработки таблицы сигналов!..");
-                e.Result = new BaseEntityModel(2, "Не выполнено!", "Не заданы категории для обработки таблицы сигналов!..");
-            }
-        }
+        //        e.Result = new BaseEntityModel(2, "Выполнено!", "Таблица  сигналов отсортирована и обработана");
+        //    }
+        //    else
+        //    {
+        //        MessageBox.Show("Не заданы категории для обработки таблицы сигналов!..");
+        //        e.Result = new BaseEntityModel(2, "Не выполнено!", "Не заданы категории для обработки таблицы сигналов!..");
+        //    }
+        //}
 
 
         /// <summary>
@@ -406,61 +401,61 @@ namespace OneClickUI
         /// исходных кодов на языках низкого уровня для
         /// использования в программах ПЛК
         /// </summary>
-        private void OneClickSourceGenerator(DoWorkEventArgs e)
-        {
-            sources = new SourceGenerator(categories.ToList());
+        //private void OneClickSourceGenerator(DoWorkEventArgs e)
+        //{
+        //    sources = new SourceGenerator(categories.ToList());
 
-            bgWorker.ReportProgress(30, "Выгрузка листа блоков данных...");
-            exWorks.PrintArrayToSheet(sources.PrintDBlistToArray(), "DB_list");
+        //    bgWorker.ReportProgress(30, "Выгрузка листа блоков данных...");
+        //    exWorks.PrintArrayToSheet(sources.PrintDBlistToArray(), "DB_list");
 
-            if (bgWorker.CancellationPending)
-            {
-                e.Cancel = true;
-                return;
-            }
+        //    if (bgWorker.CancellationPending)
+        //    {
+        //        e.Cancel = true;
+        //        return;
+        //    }
 
-            bgWorker.ReportProgress(40, "Старт генерации source-файлов...");
-            //if ((G.sourcedir == null) | (G.sourcedir == ""))
-            //    G.sourcedir = Environment.CurrentDirectory;
-            sources.SetPeripheryFields();
+        //    bgWorker.ReportProgress(40, "Старт генерации source-файлов...");
+        //    //if ((G.sourcedir == null) | (G.sourcedir == ""))
+        //    //    G.sourcedir = Environment.CurrentDirectory;
+        //    sources.SetPeripheryFields();
 
-            //sources.PrintAllSourcesToFiles(G.sourcedir);
+        //    //sources.PrintAllSourcesToFiles(G.sourcedir);
 
-            bgWorker.ReportProgress(90, "Генерация source-файлов завершена");
+        //    bgWorker.ReportProgress(90, "Генерация source-файлов завершена");
 
-            categories = new ObservableCollection<CategoryModel>(sources.Categories);
+        //    categories = new ObservableCollection<CategoryModel>(sources.Categories);
 
-            e.Result = new BaseEntityModel(3, "Выполнено!", "Генерация завершена, основная структура сигналов обновлена");
-        }
+        //    e.Result = new BaseEntityModel(3, "Выполнено!", "Генерация завершена, основная структура сигналов обновлена");
+        //}
 
 
-        private void OneClickCorrectPiDs()
-        {
-            if (categories.Count > 0)
-                foreach (var cat in categories)
-                {
-                    if (cat.Id == 10000)
-                    {
-                        var sysN = 0;
-                        var devN = 0;
+        //private void OneClickCorrectPiDs()
+        //{
+        //    if (categories.Count > 0)
+        //        foreach (var cat in categories)
+        //        {
+        //            if (cat.Id == 10000)
+        //            {
+        //                var sysN = 0;
+        //                var devN = 0;
 
-                        foreach (var pid in cat.S7Items)
-                        {
-                            sysN = int.Parse(pid.SystemNumber);
-                            devN = int.Parse(pid.DeviceNumber);
-                            var n = (int)cat.Id++;
-                            pid.DbFullName = "DB" + n;
-                        }
-                    }
+        //                foreach (var pid in cat.S7Items)
+        //                {
+        //                    sysN = int.Parse(pid.SystemNumber);
+        //                    devN = int.Parse(pid.DeviceNumber);
+        //                    var n = (int)cat.Id++;
+        //                    pid.DbFullName = "DB" + n;
+        //                }
+        //            }
 
-                    if (cat.Id != 99) continue;
-                    foreach (var sc in cat.S7Items)
-                    {
-                        sc.DbFullName = "DB99";
+        //            if (cat.Id != 99) continue;
+        //            foreach (var sc in cat.S7Items)
+        //            {
+        //                sc.DbFullName = "DB99";
 
-                    }
-                }
-        }
+        //            }
+        //        }
+        //}
 
 
         /// <summary>
@@ -470,13 +465,13 @@ namespace OneClickUI
         {
             //bgWorker.ReportProgress(10, "Начата генерация базы данных");
 
-            if (categories != null)
-            {
-                var frameView = new MainFramesView(categories);
+            //if (categories != null)
+            //{
+            //    var frameView = new MainFramesView(categories);
 
-                //bgWorker.ReportProgress(90, "База данных создана");
-                frameView.Show();
-            }
+            //    //bgWorker.ReportProgress(90, "База данных создана");
+            //    frameView.Show();
+            //}
             //else bgWorker.ReportProgress(100, "Не из чего создавать");
 
             //e.Result = new BaseEntityModel(4, "Выполнено!", "Генерация базы данных завершена");
@@ -553,16 +548,16 @@ namespace OneClickUI
 
         private void MenuItem_CreateDB_Click(object sender, RoutedEventArgs e)
         {
-            if (!bgWorker.IsBusy)
-            {
-                var arg = new BaseEntityModel();
-                arg.Id = 4;
-                arg.Name = "CreateDataBase";
-                arg.Description = "Создание базы данных из коллекции объетов в памяти";
-                bgWorker.RunWorkerAsync(arg);
-            }
-            else
-                MessageBox.Show("Уже идет выполнение фоновой операции");
+            //if (!bgWorker.IsBusy)
+            //{
+            //    var arg = new BaseEntityModel();
+            //    arg.Id = 4;
+            //    arg.Name = "CreateDataBase";
+            //    arg.Description = "Создание базы данных из коллекции объетов в памяти";
+            //    bgWorker.RunWorkerAsync(arg);
+            //}
+            //else
+            //    MessageBox.Show("Уже идет выполнение фоновой операции");
         }
 
 
@@ -571,13 +566,13 @@ namespace OneClickUI
         //----- Интерфейс второстепенных операций -----------------------------
         private void BtnDelListsClick(object sender, RoutedEventArgs e)
         {
-            var catNames = new List<string>();
+            //var catNames = new List<string>();
 
-            foreach (var cat in categories)
-            {
-                catNames.Add(cat.Name);
-            }
-            exWorks.DeleteLists(catNames);
+            //foreach (var cat in categories)
+            //{
+            //    catNames.Add(cat.Name);
+            //}
+            //exWorks.DeleteLists(catNames);
         }
 
 
@@ -591,19 +586,19 @@ namespace OneClickUI
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
-            if (exWorks != null)
-            {
+            //if (exWorks != null)
+            //{
 
-                try
-                {
-                    exWorks.CloseExcel(false);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message, "Error");
-                }
+            //    try
+            //    {
+            //        exWorks.CloseExcel(false);
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        MessageBox.Show(ex.Message, "Error");
+            //    }
 
-            }
+            //}
         }
 
 
@@ -618,9 +613,9 @@ namespace OneClickUI
 
             //bgWorker.RunWorkerAsync(arg);
 
-            sources = new SourceGenerator();
-            sources.Rootdir = "E:\\7345\\sources\\PLC1";
-            sources.MergePeripheryFiles();
+            //sources = new SourceGenerator();
+            //sources.Rootdir = "E:\\7345\\sources\\PLC1";
+            //sources.MergePeripheryFiles();
 
         }
 

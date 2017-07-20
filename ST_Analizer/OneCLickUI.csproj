@@ -182,7 +182,6 @@
     <Compile Include="Dialogs\anyList.xaml.cs">
       <DependentUpon>anyList.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Excel\ExcelWorks.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

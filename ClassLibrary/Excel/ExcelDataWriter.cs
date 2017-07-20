@@ -47,6 +47,50 @@ namespace ClassLibrary.Excel
             File.Copy(source, dest);
         }
 
+        public static void WriteExcel(string outputPath, IEnumerable<CategoryModel> categories)
+        {
+            var fi = new FileInfo(outputPath);
+            var dest = Path.Combine(fi.DirectoryName, fi.Name + "_result" + fi.Extension);
+
+            using (var document = SpreadsheetDocument.Create(outputPath, SpreadsheetDocumentType.Workbook))
+            {
+                var workbookPart = document.AddWorkbookPart();
+                workbookPart.Workbook = new Workbook();
+
+                var worksheetPart = workbookPart.AddNewPart<WorksheetPart>();
+                var sheetData = new SheetData();
+                worksheetPart.Worksheet = new Worksheet(sheetData);
+
+                foreach (var category in categories)
+                {
+                    var sheets = workbookPart.Workbook.AppendChild(new Sheets());
+                    var sheet = new Sheet() { Id = workbookPart.GetIdOfPart(worksheetPart), SheetId = 1, Name = category.Name };
+
+                    sheets.Append(sheet);
+                    var array = category.GetSymbolsArrayEx();
+
+                    int columnsCount = array.GetLength(0);
+                    int rowsCount = array.GetLength(1);
+
+                    for (int i = 0; i < array.GetLength(0); i++)
+                    {
+                        var newRow = new Row();
+                        for (int j = 0; j < array.GetLength(1); j++)
+                        {
+                            var cell = new Cell();
+                            cell.DataType = CellValues.String;
+                            cell.CellValue = new CellValue(array[i, j]);
+                            newRow.AppendChild(cell);
+                        }
+                        sheetData.AppendChild(newRow);
+                    }
+                }
+
+               
+                workbookPart.Workbook.Save();
+            }
+        }
+
         public static void WriteExcelFromArray(string outputPath, string[,] array, string sheetName)
         {
             var fi = new FileInfo(outputPath);

@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Windows;
 using OneClickUI.Helpers;
 
 namespace OneClickUI.Log
 {
     public class LogEntryModel : ObservableObject
     {
-        private bool _isVisible = true;
-        public bool IsVisible
+        private Visibility _isVisible;
+        public Visibility IsVisible
         {
             get { return _isVisible; }
             set { SetProperty(ref _isVisible, value); }
@@ -45,7 +46,7 @@ namespace OneClickUI.Log
 
         public LogEntryModel(LogTag tag, string message)
         {
-            IsVisible = true;
+            IsVisible = Visibility.Visible;
             Tag = new LogTagModel(tag);
             Message = message;
             Time = DateTime.Now.ToString("hh:mm:ss");

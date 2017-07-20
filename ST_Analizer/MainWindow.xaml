@@ -6,7 +6,7 @@
         xmlns:viewModels="clr-namespace:OneClickUI.ViewModels"
         xmlns:extenders="clr-namespace:OneClickUI.Extenders"
         mc:Ignorable="d"
-        Title="OneClick Automation" Width="836" Height="620"
+        Title="OneClick Automation" Width="836" Height="560"
         ResizeMode="NoResize" 
         Closing="Window_Closing"    
         d:DataContext="{d:DesignInstance d:Type=viewModels:MainViewModel, IsDesignTimeCreatable=True}"
@@ -45,7 +45,7 @@
         </Menu>
 
         <Label Content="Операции с файлом конфигурации" Grid.Row="1" Grid.Column="0" 
-               VerticalAlignment="Center" FontWeight="Bold"
+               VerticalAlignment="Center" FontWeight="Bold" Foreground="{StaticResource ListBoxItemSelectedBackgroundBrush}"
                HorizontalAlignment="Center" Margin="0,10,0,10" />
         <Grid Grid.Row="2" Grid.Column="0" Margin="10,10,10,10" 
               Name="GridFileOperations"  Width="Auto"
@@ -111,13 +111,14 @@
                    VerticalContentAlignment="Center" />
             <Button Grid.Row="5" Grid.Column="1" Content="Обработка данных" 
                     x:Name="BtnOperations" Margin="8"
-                    Click="BtnOperationsClick"  />
+                    Command="{Binding CategorizeTableCommand}"
+                    />
 
             <StackPanel Grid.Row="6" Grid.Column="0" Orientation="Vertical" Margin="2,4">
             </StackPanel>
             <Button Grid.Row="6" Grid.Column="1" Content="Исходные коды" Margin="8"
                     Name="BtnGenSource"  VerticalAlignment="Bottom"  
-                    Click="BtnGenSourceClick" />
+                    Command="{Binding GenerateSourcesCommand}" />
             <!--<Button Grid.Row="7" Grid.Column="1" Content="Сохранить" 
                     x:Name="BtnSave" Margin="8"
                     Click="BtnSaveClick" IsEnabled="False"  />
@@ -127,7 +128,7 @@
         </Grid>
 
         <Label Content="Операции с базой данных" Grid.Row="1" Grid.Column="1" 
-               FontWeight="Bold"
+               FontWeight="Bold" Foreground="{StaticResource ListBoxItemSelectedBackgroundBrush}"
                HorizontalAlignment="Center" Margin="0,10,0,10"  />
 
         <Grid Grid.Row="2" Grid.Column="1" Margin="10,10,10,0"  
@@ -197,9 +198,9 @@
 
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Horizontal" Visibility="{Binding IsVisible}">
-                            <TextBlock Text="{Binding Path=Tag}" Width="64" Foreground="#FF5579C7" FontWeight="Bold"/>
-                            <TextBlock Text="{Binding Path=Entry}" TextWrapping="Wrap" />
+                        <StackPanel Orientation="Horizontal" Visibility="{Binding IsVisible}" >
+                            <TextBlock Text="{Binding Path=Tag}" Width="64" Foreground="#FF5579C7" FontWeight="Bold" FontSize="12"/>
+                            <TextBlock Text="{Binding Path=Entry}" TextWrapping="Wrap" FontSize="12"/>
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
@@ -227,7 +228,8 @@
             <Label Grid.Row="0" Grid.Column="1" Content="Ожидание..." HorizontalAlignment="Right" 
                    Height="28" Margin="0,20,40,0" VerticalAlignment="Top" Width="130" 
                    HorizontalContentAlignment="Center" x:Name="LabelProcess"/>
-            <StackPanel x:Name="PanelLogFilter" Grid.Row="1" Grid.Column="0" Orientation="Horizontal"/>
+            <StackPanel x:Name="PanelLogFilter" Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
+            </StackPanel>
         </Grid>
 
         <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Height="40" 
