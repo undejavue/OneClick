@@ -5,9 +5,9 @@ using System.Windows.Controls;
 using ClassLibrary.Models;
 using ClassLibrary.SourceGenerator;
 using Microsoft.Win32;
-using OneClickUI.Dialogs;
 using OneClickUI.ViewModels;
 using OneClickUI.Views;
+using AboutView = OneClickUI.Views.AboutView;
 
 namespace OneClickUI
 {
@@ -45,72 +45,29 @@ namespace OneClickUI
                 PanelLogFilter.Children.Add(btn);
             }
 
-            // Acync worker for continuous operation
-            //bgWorker = new BackgroundWorker();
-            //bgWorker.DoWork += BgWorkerDoWork;
-            //bgWorker.RunWorkerCompleted += BgWorkerRunWorkerCompleted;
-            //bgWorker.ProgressChanged += BgWorkerProgressChanged;
-            //bgWorker.WorkerReportsProgress = true;
-            //bgWorker.WorkerSupportsCancellation = true;
-
-            //txt_filename.DataContext = global_FileName;
-            //OneClickSetGlobals();
         }
 
-        //----- Асинхронное выполнение основных операций ------------------------------
-
-        //private void BgWorkerDoWork(object sender, DoWorkEventArgs e)
-        //{
-        //    var arg = (BaseEntityModel)e.Argument;
-
-        //    switch (arg.Id)
-        //    {
-        //        case 1:
-        //            OneClickTableAdaptation(e);
-        //            break;
-        //        case 2:
-        //            OneClickTableToCollection(e);
-        //            break;
-        //        case 3:
-        //            OneClickSourceGenerator(e);
-        //            break;
-        //        case 4:
-        //            //OneClickDbCreate(e);
-        //            break;
-        //        default:
-        //            break;
-        //    }
-        //}
-
-        //private void BgWorkerProgressChanged(object sender, ProgressChangedEventArgs e)
-        //{
-        //    this.ProgressBar.Value = e.ProgressPercentage;
-        //    //this.TxtResult.AppendText("\r\n" + DateTime.Now.ToString("h:mm:ss") + ": " + e.UserState.ToString());
-        //    //this.TxtResult.ScrollToEnd();
-
-        //    LabelProcess.Content = "Выполняется...";
-        //}
 
         private void BgWorkerRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if (e.Cancelled)
-            {
-                MessageBox.Show("Операция отменена", "S7 analyzer", MessageBoxButton.OK);
-                LabelProcess.Content = "Отменено!";
-                Print2Result("Операция отменена");
-            }
-            else
-            {
-                var result = (BaseEntityModel)e.Result;
-                Print2Result(result.Description);
-                LabelProcess.Content = result.Name;
-            }
+            //if (e.Cancelled)
+            //{
+            //    MessageBox.Show("Операция отменена", "S7 analyzer", MessageBoxButton.OK);
+            //    LabelProcess.Content = "Отменено!";
+            //    Print2Result("Операция отменена");
+            //}
+            //else
+            //{
+            //    var result = (BaseEntityModel)e.Result;
+            //    Print2Result(result.Description);
+            //    LabelProcess.Content = result.Name;
+            //}
 
-            ProgressBar.IsIndeterminate = false;
-            this.ProgressBar.Value = 100;
+            //ProgressBar.IsIndeterminate = false;
+            //this.ProgressBar.Value = 100;
 
-            BtnCancel.IsEnabled = false;
-            BtnGenSource.IsEnabled = true;
+            //BtnCancel.IsEnabled = false;
+            //BtnGenSource.IsEnabled = true;
 
             //exWorks.SetVisible(true);
         }
@@ -261,9 +218,9 @@ namespace OneClickUI
             //}
             //else
             //    MessageBox.Show("Уже идет выполнение фоновой операции");
-            LabelProcess.Content = "Выполняется...";
-            OneClickDbCreate();
-            LabelProcess.Content = "Готово";
+            //LabelProcess.Content = "Выполняется...";
+            //OneClickDbCreate();
+            //LabelProcess.Content = "Готово";
         }
 
         //--- Открыть базу данных
@@ -509,7 +466,7 @@ namespace OneClickUI
 
                 //G.DBfilename = filename;
 
-                var frameView = new MainFramesView(filename);
+                var frameView = new Views.MainFramesView(filename);
                 frameView.Show();
             }
 
@@ -531,7 +488,7 @@ namespace OneClickUI
 
         private void MenuItem_About_Click(object sender, RoutedEventArgs e)
         {
-            var about = new dialog_About();
+            var about = new AboutView();
             about.Show();
         }
 
@@ -581,7 +538,7 @@ namespace OneClickUI
         {
             //TxtResult.AppendText("\r\n" + DateTime.Now.ToString("h:mm:ss") + ": " + s);
             //TxtResult.ScrollToEnd();
-            viewModel.ConsoleWrite(s);
+            //viewModel.ConsoleWrite(s);
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)

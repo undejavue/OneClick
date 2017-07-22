@@ -66,9 +66,6 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Office.Interop.Excel, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.configuration" />
@@ -119,7 +116,7 @@
     <Compile Include="Views\NewCategoryView.xaml.cs">
       <DependentUpon>NewCategoryView.xaml</DependentUpon>
     </Compile>
-    <Page Include="Dialogs\dialog_outBuffer.xaml">
+    <Page Include="Views\TextBufferView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -127,7 +124,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Dialogs\dialog_About.xaml">
+    <Page Include="Views\AboutView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -155,7 +152,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Dialogs\anyList.xaml">
+    <Page Include="Views\AnyListView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -167,30 +164,26 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Dialogs\dialog_outBuffer.xaml.cs">
-      <DependentUpon>dialog_outBuffer.xaml</DependentUpon>
+    <Compile Include="Views\TextBufferView.xaml.cs">
+      <DependentUpon>TextBufferView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\FrameDbView.xaml.cs">
       <DependentUpon>FrameDbView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\dialog_About.xaml.cs">
-      <DependentUpon>dialog_About.xaml</DependentUpon>
+    <Compile Include="Views\AboutView.xaml.cs">
+      <DependentUpon>AboutView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\CategoriesView.xaml.cs">
       <DependentUpon>CategoriesView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\anyList.xaml.cs">
-      <DependentUpon>anyList.xaml</DependentUpon>
+    <Compile Include="Views\AnyListView.xaml.cs">
+      <DependentUpon>AnyListView.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Views\MainFramesView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Dialogs\progress_bar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -206,9 +199,6 @@
   <ItemGroup>
     <Compile Include="Views\MainFramesView.xaml.cs">
       <DependentUpon>MainFramesView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Dialogs\progress_bar.xaml.cs">
-      <DependentUpon>progress_bar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

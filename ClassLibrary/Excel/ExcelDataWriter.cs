@@ -4,6 +4,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using ClassLibrary.Models;
 using DocumentFormat.OpenXml;
@@ -43,34 +44,81 @@ namespace ClassLibrary.Excel
         public static void BackupFile(string source)
         {
             var fi = new FileInfo(source);         
-            var dest = Path.Combine(fi.DirectoryName, fi.Name + "_backup" + fi.Extension);
-            File.Copy(source, dest);
+            var dest = Path.Combine(fi.DirectoryName, "_backup_" + fi.Name);
+            File.Copy(source, dest, true);
         }
 
-        public static void WriteExcel(string outputPath, IEnumerable<CategoryModel> categories)
+        public static bool WriteExcel(string outputPath, IEnumerable<CategoryModel> categories)
         {
-            var fi = new FileInfo(outputPath);
-            var dest = Path.Combine(fi.DirectoryName, fi.Name + "_result" + fi.Extension);
-
-            using (var document = SpreadsheetDocument.Create(outputPath, SpreadsheetDocumentType.Workbook))
+            try
             {
-                var workbookPart = document.AddWorkbookPart();
-                workbookPart.Workbook = new Workbook();
-
-                var worksheetPart = workbookPart.AddNewPart<WorksheetPart>();
-                var sheetData = new SheetData();
-                worksheetPart.Worksheet = new Worksheet(sheetData);
-
-                foreach (var category in categories)
+                using (var document = SpreadsheetDocument.Create(outputPath, SpreadsheetDocumentType.Workbook))
                 {
+                    var workbookPart = document.AddWorkbookPart();
+                    workbookPart.Workbook = new Workbook();
+
+                    var worksheetPart = workbookPart.AddNewPart<WorksheetPart>();
+                    var sheetData = new SheetData();
+                    worksheetPart.Worksheet = new Worksheet(sheetData);
+
+                    foreach (var category in categories)
+                    {
+                        var sheets = workbookPart.Workbook.AppendChild(new Sheets());
+                        var sheet = new Sheet()
+                        {
+                            Id = workbookPart.GetIdOfPart(worksheetPart),
+                            SheetId = 1,
+                            Name = category.Name
+                        };
+
+                        sheets.Append(sheet);
+                        var array = category.GetSymbolsArrayEx();
+
+                        int columnsCount = array.GetLength(0);
+                        int rowsCount = array.GetLength(1);
+
+                        for (int i = 0; i < array.GetLength(0); i++)
+                        {
+                            var newRow = new Row();
+                            for (int j = 0; j < array.GetLength(1); j++)
+                            {
+                                var cell = new Cell();
+                                cell.DataType = CellValues.String;
+                                cell.CellValue = new CellValue(array[i, j]);
+                                newRow.AppendChild(cell);
+                            }
+                            sheetData.AppendChild(newRow);
+                        }
+                    }
+
+                    workbookPart.Workbook.Save();
+                }
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
+        }
+
+        public static bool WriteExcelFromArray(string outputPath, string[,] array, string sheetName, CancellationToken token)
+        {
+            try
+            {
+                using (var document = SpreadsheetDocument.Create(outputPath, SpreadsheetDocumentType.Workbook))
+                {
+                    var workbookPart = document.AddWorkbookPart();
+                    workbookPart.Workbook = new Workbook();
+
+                    var worksheetPart = workbookPart.AddNewPart<WorksheetPart>();
+                    var sheetData = new SheetData();
+                    worksheetPart.Worksheet = new Worksheet(sheetData);
+
                     var sheets = workbookPart.Workbook.AppendChild(new Sheets());
-                    var sheet = new Sheet() { Id = workbookPart.GetIdOfPart(worksheetPart), SheetId = 1, Name = category.Name };
+                    var sheet = new Sheet { Id = workbookPart.GetIdOfPart(worksheetPart), SheetId = 1, Name = sheetName };
 
                     sheets.Append(sheet);
-                    var array = category.GetSymbolsArrayEx();
-
-                    int columnsCount = array.GetLength(0);
-                    int rowsCount = array.GetLength(1);
 
                     for (int i = 0; i < array.GetLength(0); i++)
                     {
@@ -83,49 +131,18 @@ namespace ClassLibrary.Excel
                             newRow.AppendChild(cell);
                         }
                         sheetData.AppendChild(newRow);
+
+                        if (token.IsCancellationRequested) return true;
                     }
+                    workbookPart.Workbook.Save();
                 }
-
-               
-                workbookPart.Workbook.Save();
+                return true;
             }
-        }
-
-        public static void WriteExcelFromArray(string outputPath, string[,] array, string sheetName)
-        {
-            var fi = new FileInfo(outputPath);
-            var dest = Path.Combine(fi.DirectoryName, fi.Name + "_result" + fi.Extension);
-
-            using (var document = SpreadsheetDocument.Create(outputPath, SpreadsheetDocumentType.Workbook))
+            catch (Exception e)
             {
-                var workbookPart = document.AddWorkbookPart();
-                workbookPart.Workbook = new Workbook();
-
-                var worksheetPart = workbookPart.AddNewPart<WorksheetPart>();
-                var sheetData = new SheetData();
-                worksheetPart.Worksheet = new Worksheet(sheetData);
-
-                var sheets = workbookPart.Workbook.AppendChild(new Sheets());
-                var sheet = new Sheet() { Id = workbookPart.GetIdOfPart(worksheetPart), SheetId = 1, Name = sheetName };
-
-                sheets.Append(sheet);
-                int columnsCount = array.GetLength(0);
-                int rowsCount = array.GetLength(1);
-
-                for(int i = 0; i < array.GetLength(0); i++)
-                {
-                    var newRow = new Row();
-                    for (int j = 0;j < array.GetLength(1); j++)
-                    {
-                        var cell = new Cell();
-                        cell.DataType = CellValues.String;
-                        cell.CellValue = new CellValue(array[i,j]);
-                        newRow.AppendChild(cell);
-                    }
-                    sheetData.AppendChild(newRow);
-                }
-                workbookPart.Workbook.Save();
-            }
+                Console.WriteLine(e);
+                return false;
+            }       
         }
 
         public static void WriteExcelFromDatatable(string outputPath, DataTable table, string sheetName)

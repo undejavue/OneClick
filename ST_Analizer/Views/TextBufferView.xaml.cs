@@ -4,17 +4,17 @@ using System.IO;
 using System.Windows;
 using Microsoft.Win32;
 
-namespace OneClickUI.Dialogs
+namespace OneClickUI.Views
 {
     /// <summary>
-    /// Логика взаимодействия для dialog_outBuffer.xaml
+    /// Логика взаимодействия для TextBufferView.xaml
     /// </summary>
-    public partial class dialog_outBuffer : Window
+    public partial class TextBufferView : Window
     {
         private List<string> resultText;
         private string rootdir;
 
-        public dialog_outBuffer(List<String> outputText)
+        public TextBufferView(List<String> outputText)
         {
             InitializeComponent();
 
@@ -28,7 +28,7 @@ namespace OneClickUI.Dialogs
         {
             foreach (string s in resultText)
             {
-                txt_result.AppendText(s + "\r\n");
+                TxtResult.AppendText(s + "\r\n");
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 using ClassLibrary.Excel;
@@ -14,11 +15,20 @@ namespace ClassLibrary.Services
             //var path = @"s:\OneClickDb\PLC1.xlsx";
 
             var dt = new DataTable();
-            using (var reader = new ExcelDataReader(pathToExcel))
+            try
             {
-                dt.Load(reader);
-                return dt;
-            } 
+                using (var reader = new ExcelDataReader(pathToExcel))
+                {
+                    dt.Load(reader);
+                    return dt;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
+
         }
 
         public static async Task<IEnumerable<CategoryModel>> GenerateDefaultCategoriesAsync()

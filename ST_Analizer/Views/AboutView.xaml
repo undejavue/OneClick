@@ -1,0 +1,34 @@
+﻿<Window x:Class="OneClickUI.Views.AboutView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        Title="AboutView" Height="240.845" Width="300">
+    <Border Background="{StaticResource ListBoxBackgroundBrush}" BorderThickness="1" BorderBrush="WhiteSmoke">
+        <DockPanel>
+            <Label Content="OneClick Automation" DockPanel.Dock="Top" Margin="0,50,0,0"
+                   HorizontalAlignment="Center" 
+                   Foreground="{StaticResource ListBoxItemSelectedBackgroundBrush}"
+                   HorizontalContentAlignment="Center" 
+                   VerticalContentAlignment="Center"
+                   Height="52"  VerticalAlignment="Center" 
+                   Width="246" FontSize="20"/>
+            <Label HorizontalAlignment="Center" 
+                   DockPanel.Dock="Top"
+                   Foreground="{StaticResource ListBoxItemSelectedBackgroundBrush}"    
+                   HorizontalContentAlignment="Center"
+                   VerticalAlignment="Center" 
+                   Width="Auto" 
+                   Content="version"
+                   Name="TxtVersion"/>
+            <StackPanel DockPanel.Dock="Bottom">
+                <Button Content="Закрыть"  Height="32"  Margin="20"
+                        HorizontalAlignment="Center"  
+                        x:Name="BtnCancel" 
+                        VerticalAlignment="Top" 
+                        Width="74" 
+                        Click="btn_Cancel_Click"/>
+            </StackPanel>
+        </DockPanel>
+    </Border>
+</Window>

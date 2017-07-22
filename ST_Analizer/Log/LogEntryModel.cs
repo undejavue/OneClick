@@ -20,6 +20,12 @@ namespace OneClickUI.Log
             set { SetProperty(ref _tag, value); }
         }
 
+        private int _progress;
+        public int Progress
+        {
+            get { return _progress; }
+            set { SetProperty(ref _progress, value); }
+        }
 
         private string _message;
         public string Message
@@ -44,13 +50,14 @@ namespace OneClickUI.Log
         }
 
 
-        public LogEntryModel(LogTag tag, string message)
+        public LogEntryModel(LogTag tag, string message, int progress = 0)
         {
             IsVisible = Visibility.Visible;
             Tag = new LogTagModel(tag);
             Message = message;
             Time = DateTime.Now.ToString("hh:mm:ss");
             Entry = Time + ": " + Message;
+            Progress = 0;
         }
 
     }

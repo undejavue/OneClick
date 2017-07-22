@@ -23,13 +23,21 @@ namespace ClassLibrary.Excel
 
         public ExcelDataReader(string path, int sheetIndex = 0, bool firstRowAsHeader = true)
         {
-            _document = SpreadsheetDocument.Open(path, false);
-            _sharedStrings = GetSharedStrings(_document);
+            try
+            {
+                _document = SpreadsheetDocument.Open(path, false);
+                _sharedStrings = GetSharedStrings(_document);
 
-            var worksheetPart = _document.WorkbookPart.GetPartById(GetSheetByIndex(sheetIndex).Id.Value);
-            _reader = OpenXmlReader.Create(worksheetPart);
-            SkipRows(GetEmptyRowsCount(worksheetPart));
-            _headers = firstRowAsHeader ? GetFirstRowAsHeaders() : GetRangeHeaders(worksheetPart);
+                var worksheetPart = _document.WorkbookPart.GetPartById(GetSheetByIndex(sheetIndex).Id.Value);
+                _reader = OpenXmlReader.Create(worksheetPart);
+                SkipRows(GetEmptyRowsCount(worksheetPart));
+                _headers = firstRowAsHeader ? GetFirstRowAsHeaders() : GetRangeHeaders(worksheetPart);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         public ExcelDataReader(Stream stream, int sheetIndex = 0, bool firstRowAsHeader = true)

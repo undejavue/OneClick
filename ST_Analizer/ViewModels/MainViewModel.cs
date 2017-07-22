@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Data;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 using ClassLibrary.Models;
 using OneClickUI.Helpers;
@@ -21,11 +21,21 @@ namespace OneClickUI.ViewModels
 {
     public class MainViewModel : BaseViewModel
     {
+        private CancellationTokenSource tokenSource;
+        private CancellationToken token;
+
         private string _rootDirectory = string.Empty;
         public string RootDirectory
         {
             get { return _rootDirectory; }
             set { SetProperty(ref _rootDirectory, value); }
+        }
+
+        private string _filePath = string.Empty;
+        public string FilePath
+        {
+            get { return _filePath; }
+            set { SetProperty(ref _filePath, value); }
         }
 
         private int _progress;
@@ -35,10 +45,14 @@ namespace OneClickUI.ViewModels
             set { SetProperty(ref _progress, value); }
         }
 
-        public SymbolTableModel SymbolTable { get; set; }
+        private string _progressLabel;
+        public string ProgressLabel
+        {
+            get { return _progressLabel; }
+            set { SetProperty(ref _progressLabel, value); }
+        }
 
-        private CancellationTokenSource tokenSource;
-        private CancellationToken token;
+        public SymbolTableModel SymbolTable { get; set; }
 
         public ObservableRangeCollection<CategoryModel> Categories { get; set; }
         public ObservableCollection<LogEntryModel> LogItems { get; set; }
@@ -50,32 +64,43 @@ namespace OneClickUI.ViewModels
         public ICommand CategoriesCommand { get; set; }
         public ICommand FileSelectCommand { get; set; }
         public ICommand FilterLogCommand { get; set; }
+        private ICommand _cancelCommand;
+        public ICommand CancelCommand
+        {
+            get
+            {
+                return _cancelCommand ??
+                    (_cancelCommand = new RelayCommand(obj => tokenSource?.Cancel()));
+            }
+        }
 
+        private static readonly object SyncLock = new object();
 
         public MainViewModel()
         {
             Categories = new ObservableRangeCollection<CategoryModel>();
+            Task.Run(SetCategories);
 
-            SerializeTableCommand = new RelayCommand
-                (async obj => await ExecuteSerializeTableCommand(RootDirectory,
-                                    new Progress<int>(progress => Progress = progress)));
+            SerializeTableCommand = new RelayCommand(
+                async obj => await ExecuteSerializeTableCommand());
 
-            CategorizeTableCommand = new RelayCommand(obj =>
-                ExecuteCategorizeTableCommand(new Progress<int>(progress => Progress = progress)));
+            CategorizeTableCommand = new RelayCommand(
+                async obj => await ExecuteCategorizeTableCommand());
 
             CategoriesCommand = new RelayCommand(obj =>
             {
-                CategoriesView view = new CategoriesView(Categories);
+                var view = new CategoriesView(Categories);
                 view.ShowDialog();
                 ConsoleWrite("Созданы категории сортировки...");
             });
 
-            GenerateSourcesCommand = new RelayCommand(obj =>
-                ExecuteGenerateSourcesCommand(new Progress<int>(progress => Progress = progress)));
+            GenerateSourcesCommand = new RelayCommand(
+                async obj => await ExecuteGenerateSourcesCommand());
 
             FileSelectCommand = new RelayCommand(obj =>
             {
-                RootDirectory = FileManager.OpenFile(RootDirectory);
+                FilePath = FileManager.OpenFile(RootDirectory);
+                RootDirectory = new FileInfo(FilePath).DirectoryName;
                 ConsoleWrite("Задан файл конфигурации...");
             });
 
@@ -86,18 +111,32 @@ namespace OneClickUI.ViewModels
             token = tokenSource.Token;
 
             ConsoleWrite("Initialized...");
+            BindingOperations.EnableCollectionSynchronization(LogItems, SyncLock);
+        }
+
+        private async Task SetCategories()
+        {
+            var defaultList = await OneService.GenerateDefaultCategoriesAsync();
+            if (Categories == null)
+                Categories = new ObservableRangeCollection<CategoryModel>(defaultList);
+            else
+            {
+                Categories.ReplaceRange(defaultList);
+            }
+            ConsoleWrite("Созданы категории сортировки...");
         }
 
         private void InitFilter()
         {
             LogItems = new ObservableCollection<LogEntryModel>();
-            LogFIlter = new ObservableCollection<LogTagModel>();
-            LogFIlter.Add(new LogTagModel(LogTag.All));
-            LogFIlter.Add(new LogTagModel(LogTag.Debug));
-            LogFIlter.Add(new LogTagModel(LogTag.Error));
-            LogFIlter.Add(new LogTagModel(LogTag.Info));
-            LogFIlter.Add(new LogTagModel(LogTag.Warning));
-
+            LogFIlter = new ObservableCollection<LogTagModel>
+            {
+                new LogTagModel(LogTag.All),
+                new LogTagModel(LogTag.Debug),
+                new LogTagModel(LogTag.Error),
+                new LogTagModel(LogTag.Info),
+                new LogTagModel(LogTag.Warning)
+            };
         }
 
         private void ExecuteFilterLogCommand(object obj)
@@ -127,22 +166,37 @@ namespace OneClickUI.ViewModels
             }
         }
 
-        public void ConsoleWrite(string line, LogTag tag = LogTag.Debug)
+        public void ConsoleWrite(string line, LogTag tag = LogTag.Info)
         {
             LogItems.Add(new LogEntryModel(tag, line));
         }
 
-        private async Task ExecuteSerializeTableCommand(object param, IProgress<int> progress)
+        private async Task ExecuteSerializeTableCommand()
         {
+            if (!File.Exists(FilePath))
+            {
+                ConsoleWrite("Ошибка открытия файла", LogTag.Error);
+                return;
+            }              
+
+            IsBusy = true;
+            ProgressLabel = "Выполняется...";
+
             tokenSource = new CancellationTokenSource();
             token = tokenSource.Token;
 
             await Task.Run(() =>
             {
-                var filename = (string)param;
-                var dt = OneService.GenerateTableFromExcel(filename);
-
-                progress.Report(30);
+                var dt = OneService.GenerateTableFromExcel(FilePath);
+                if (dt == null)
+                {
+                    lock (SyncLock)
+                    {
+                        ConsoleWrite("Ошибка открытия файла", LogTag.Error);
+                        return;
+                    }
+                }
+                Progress = 30;
 
                 IList<SymbolTableItemModel> items = dt.AsEnumerable()
                         .Select(row =>
@@ -156,39 +210,71 @@ namespace OneClickUI.ViewModels
                         .ToList();
 
                 SymbolTable = new SymbolTableModel(items);
+
+                lock (SyncLock) { ConsoleWrite("Таблица прочитана"); }
+                if (token.IsCancellationRequested)
+                {
+                    lock (SyncLock) { ConsoleWrite("Операция отменена"); }
+                    return;
+                }
+
                 SymbolTable.AnalyseAndSetTags();
                 SymbolTable.SortTable();
-                //var arr = SymbolTable.GetSymbolsArray();
-                ExcelDataWriter.BackupFile(filename);
-                ExcelDataWriter.WriteExcelFromArray(filename, SymbolTable.GetSymbolsArray(), "SymbolTable");
+
+                lock (SyncLock) { ConsoleWrite("Анализ таблицы выполнен"); }
+                Progress = 50;
+
+                ExcelDataWriter.BackupFile(FilePath);
+
+                var fi = new FileInfo(FilePath);
+                var dest = Path.Combine(RootDirectory, "result_" + fi.Name);
+
+                bool isOk = ExcelDataWriter.WriteExcelFromArray(dest, SymbolTable.GetSymbolsArray(), "SymbolTable", token);
+                Progress = 100;
+                var s = isOk ? "Адаптированная таблица сохранена" : "Ошибка записи файла";
+                lock (SyncLock){ ConsoleWrite(s); }
 
             }, token).ConfigureAwait(false);
 
-            ConsoleWrite("Table is serialized", LogTag.Info);
+            IsBusy = false;
+            ProgressLabel = "Завершено";
         }
 
 
-        private void ExecuteCategorizeTableCommand(IProgress<int> progress)
+        private async Task ExecuteCategorizeTableCommand()
         {
             tokenSource = new CancellationTokenSource();
             token = tokenSource.Token;
 
-            ConsoleWrite("Запуск цикла сортировки таблицы по категориям...", LogTag.Info);
-            int count = Categories.Count;
+            ConsoleWrite("Запуск цикла сортировки таблицы по категориям...");
 
-            if (count > 0)
+
+            int count = Categories.Count;
+            if (count == 0)
             {
+                ConsoleWrite("Не заданы категории для обработки таблицы сигналов!..", LogTag.Error);
+                return;
+            }
+
+            await Task.Run(() =>
+            {
+                ProgressLabel = "Выгрузка категорий";
+                int i = 1;
 
                 foreach (var cat in Categories)
                 {
                     var list = cat.Keys.Select(k => k.Name).ToList();
                     cat.AddCollection(SymbolTable.ExtractListByKeys(list));
 
-
-                    progress.Report(count--);
-                    ConsoleWrite($"Осталось категорий: {count}", LogTag.Info);
+                    Progress = (int)((double)Categories.Count / 100 * i++);
+                    lock (SyncLock)
+                    {
+                        ConsoleWrite($"Осталось категорий: {count--}");
+                    }
                 }
 
+                ProgressLabel = "Уточнение типов";
+                i = 1;
 
                 foreach (var cat in Categories)
                 {
@@ -212,47 +298,57 @@ namespace OneClickUI.ViewModels
                         sc.DbFullName = "DB99";
 
                     }
+                    Progress = (int)((double)Categories.Count / 100 * i++);
                 }
 
-
-                ConsoleWrite("Выполнена сортировка таблицы по ключам и категориям", LogTag.Info);
+                lock (SyncLock)
+                {
+                    ConsoleWrite("Выполнена сортировка таблицы по ключам и категориям");
+                }
 
                 var resultFile = Path.Combine(RootDirectory, "result.xls");
-                ExcelDataWriter.WriteExcel(resultFile, Categories);
+                bool isOk = ExcelDataWriter.WriteExcel(resultFile, Categories);
+
+                var message = isOk ? "Выполнена выгрузка категорий в Excel" : "Ошибка записи файла";
+                lock (SyncLock)
+                {
+                    ConsoleWrite(message);
+                }
 
                 resultFile = Path.Combine(RootDirectory, "result_unsorted.xls");
-                ExcelDataWriter.WriteExcelFromArray(resultFile, SymbolTable.GetSymbolsArray(), "unsorted");
+                isOk = ExcelDataWriter.WriteExcelFromArray(resultFile, SymbolTable.GetSymbolsArray(), "unsorted", token);
 
-                ConsoleWrite("Выполнена выгрузка категорий в Excel", LogTag.Info);
-                ConsoleWrite("Выполнено! Таблица  сигналов отсортирована и обработана", LogTag.Info);
-            }
-            else
-            {
-                ConsoleWrite("Не заданы категории для обработки таблицы сигналов!..", LogTag.Error);
-            }
+            }, token).ConfigureAwait(false);
+
+            ConsoleWrite("Выполнено! Таблица  сигналов отсортирована и обработана");
         }
 
-        private void ExecuteGenerateSourcesCommand(IProgress<int> progress)
+        private async Task ExecuteGenerateSourcesCommand()
         {
+            tokenSource = new CancellationTokenSource();
+            token = tokenSource.Token;
+
             var sources = new SourceGenerator(Categories);
 
-            ConsoleWrite("Выгрузка листа блоков данных...", LogTag.Info);
+            ConsoleWrite("Выгрузка листа блоков данных...");
 
             var resultFile = Path.Combine(RootDirectory, "sources.xls");
-            ExcelDataWriter.WriteExcelFromArray(resultFile, sources.PrintDBlistToArray(), "DB_list");
+            await Task.Run(() =>
+            {
+                ExcelDataWriter.WriteExcelFromArray(resultFile, sources.PrintDBlistToArray(), "DB_list", token);
+            }, token).ConfigureAwait(false);
 
-            progress.Report(40);
-            ConsoleWrite("Старт генерации source-файлов...", LogTag.Info);
-            sources.SetPeripheryFields();
+            Progress = 40;
+            ConsoleWrite("Старт генерации source-файлов...");
+            await sources.SetPeripheryFields(token);
 
-            //sources.PrintAllSourcesToFiles(G.sourcedir);
-            progress.Report(90);
-            ConsoleWrite("Генерация source-файлов завершена", LogTag.Info);
+            Progress = 90;
+            ConsoleWrite("Генерация source-файлов завершена");
 
             Categories.ReplaceRange(sources.Categories);
 
-            progress.Report(100);
-            ConsoleWrite("Выполнено! Генерация завершена, основная структура сигналов обновлена", LogTag.Info);
+            Progress = 100;
+            ConsoleWrite("Выполнено! Генерация завершена, основная структура сигналов обновлена");
         }
     }
 }

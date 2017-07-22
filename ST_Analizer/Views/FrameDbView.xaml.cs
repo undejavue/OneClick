@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using ClassLibrary.Models;
 using ClassLibrary.SourceGenerator;
-using OneClickUI.Dialogs;
 
-namespace OneClickUI
+namespace OneClickUI.Views
 {
     /// <summary>
     /// Логика взаимодействия для DB_SymbolsEx.xaml
@@ -89,14 +89,14 @@ namespace OneClickUI
             var sc = new SourceGenerator(cl);    
             var slist = sc.PrintPeripheryForCategory(mc.Name);
 
-            var outWindow = new dialog_outBuffer(slist);
+            var outWindow = new TextBufferView(slist);
             outWindow.Show();
         }
 
-        private void BtnExportAllClick(object sender, RoutedEventArgs e)
+        private async void BtnExportAllClick(object sender, RoutedEventArgs e)
         {
-            var SC = new SourceGenerator(Collection.ToList());
-            SC.PrintAllSourcesToFiles(Rootdir);
+            var sc = new SourceGenerator(Collection.ToList());
+            await sc.PrintAllSourcesToFiles(Rootdir, new CancellationToken());
         }
 
     }

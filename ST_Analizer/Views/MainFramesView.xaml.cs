@@ -9,8 +9,7 @@ using System.Windows;
 using ClassLibrary.Database;
 using ClassLibrary.Models;
 
-
-namespace OneClickUI
+namespace OneClickUI.Views
 {
     /// <summary>
     /// Логика взаимодействия для pageFrame.xaml
@@ -42,7 +41,7 @@ namespace OneClickUI
             }
 
             _windowDbView = new FrameDbView(Context.dbCategory.Local);
-            this.mainFrame.NavigationService.Navigate(_windowDbView);
+            this.MainFrame.NavigationService.Navigate(_windowDbView);
         }
 
 
@@ -61,7 +60,7 @@ namespace OneClickUI
             Context.dbCategory.Load();
 
             _windowDbView = new FrameDbView(Context.dbCategory.Local);
-            this.mainFrame.NavigationService.Navigate(_windowDbView);
+            this.MainFrame.NavigationService.Navigate(_windowDbView);
 
         }
 
@@ -85,7 +84,7 @@ namespace OneClickUI
            //ObservableCollection<DataBlockModel> dblist = new ObservableCollection<DataBlockModel>(context.dbDataBlock.ToList());
 
            _windowDbView = new FrameDbView(Context.dbCategory.Local);
-           this.mainFrame.NavigationService.Navigate(_windowDbView);
+           this.MainFrame.NavigationService.Navigate(_windowDbView);
         }
 
         private void BtnDbAddClick(object sender, RoutedEventArgs e)
@@ -135,7 +134,7 @@ namespace OneClickUI
             Context.Dispose();
             _windowDbView.Flush();
 
-            this.mainFrame.NavigationService.Refresh();
+            this.MainFrame.NavigationService.Refresh();
         }
 
         private IEnumerable<CategoryModel> GenDefaultCategories()
