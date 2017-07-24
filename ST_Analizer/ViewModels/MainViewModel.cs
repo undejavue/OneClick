@@ -53,7 +53,6 @@ namespace OneClickUI.ViewModels
         }
 
         public SymbolTableModel SymbolTable { get; set; }
-
         public ObservableRangeCollection<CategoryModel> Categories { get; set; }
         public ObservableCollection<LogEntryModel> LogItems { get; set; }
         public ObservableCollection<LogTagModel> LogFIlter { get; set; }
@@ -243,6 +242,7 @@ namespace OneClickUI.ViewModels
 
         private async Task ExecuteCategorizeTableCommand()
         {
+            IsBusy = true;
             tokenSource = new CancellationTokenSource();
             token = tokenSource.Token;
 
@@ -320,11 +320,15 @@ namespace OneClickUI.ViewModels
 
             }, token).ConfigureAwait(false);
 
+            ProgressLabel = "Выполнено";
+            Progress = 0;
             ConsoleWrite("Выполнено! Таблица  сигналов отсортирована и обработана");
+            IsBusy = false;
         }
 
         private async Task ExecuteGenerateSourcesCommand()
         {
+            IsBusy = true;
             tokenSource = new CancellationTokenSource();
             token = tokenSource.Token;
 
@@ -347,7 +351,8 @@ namespace OneClickUI.ViewModels
 
             Categories.ReplaceRange(sources.Categories);
 
-            Progress = 100;
+            Progress = 0;
+            IsBusy = false;
             ConsoleWrite("Выполнено! Генерация завершена, основная структура сигналов обновлена");
         }
     }

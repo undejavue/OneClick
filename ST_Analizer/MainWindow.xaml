@@ -9,7 +9,7 @@
         Title="OneClick Automation" 
         ResizeMode="NoResize" 
         Closing="Window_Closing" 
-        Width="800" Height="540"
+        Width="800" Height="544"
         Background="{StaticResource ListBoxBackgroundBrush}"
         d:DataContext="{d:DesignInstance d:Type=viewModels:MainViewModel, IsDesignTimeCreatable=True}"
         >
@@ -195,15 +195,22 @@
                      IsEnabled="True" Height="Auto"
                      extenders:ListBoxExtender.AutoScrollToEnd="True"  
                      Background="{StaticResource ListBoxBackgroundBrush}">
-
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Horizontal" Visibility="{Binding IsVisible}">
+                        <StackPanel Orientation="Horizontal" 
+                                    Visibility="{Binding IsVisible}">
                             <!--<TextBlock Text="{Binding Path=Tag}" Width="64" Foreground="#FF5579C7" FontWeight="Bold" FontSize="12"/>-->
-                            <TextBlock Text="{Binding Path=Entry}" TextWrapping="Wrap" FontSize="12"/>
+                            <TextBlock Text="{Binding Path=Entry}"                                    
+                                       Foreground="{StaticResource LightForegroundBrush}"
+                                       TextWrapping="Wrap" FontSize="11"/>
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="Height" Value="18" />
+                    </Style>
+                </ListBox.ItemContainerStyle>
             </ListBox>
             
             <Button Grid.Row="0" Grid.Column="1" Content="Отмена" 
@@ -232,15 +239,17 @@
                 <ProgressBar x:Name="ProgressBarMain" 
                                  Value ="{Binding Progress}"
                                  HorizontalAlignment="Stretch"
-                                 Width="300"
+                             Margin="0,0,20,0"    
+                             BorderThickness="1"
+                             Background="{StaticResource ListBoxBackgroundBrush}"
                              Height="18"
                              />
             </StatusBarItem>
-            <StatusBarItem HorizontalContentAlignment="Right">
+            <!--<StatusBarItem HorizontalContentAlignment="Right">
                 <TextBlock x:Name="TextBlockInfo" 
                                Margin="5,0,0,0" 
                                TextAlignment="Right" />
-            </StatusBarItem>
+            </StatusBarItem>-->
         </StatusBar>
    
     </DockPanel>

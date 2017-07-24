@@ -321,7 +321,9 @@ namespace ClassLibrary.Models
 
         public List<SymbolTableItemModel> ExtractListByKeys(List<string> keys)
         {
-            List<SymbolTableItemModel> list = new List<SymbolTableItemModel>();
+            var list = new List<SymbolTableItemModel>();
+
+            var test = Symbols.Count;
 
             foreach (string key in keys)
             {
@@ -337,20 +339,20 @@ namespace ClassLibrary.Models
                 {
                     this.Symbols.Remove(item);
                 }
+
+                var test2 = Symbols.Count;
+
             }
             return list;
         }
 
         private static bool IsItemMatchKey(SymbolTableItemModel item, string key)
         {
-            bool isMatch = false;
-
             if (item.SignalType.Equals(key)) return true;
             if (item.SignalComment.Contains(key)) return true;
 
-            return isMatch;
+            return false;
         }
-
     }
 
 

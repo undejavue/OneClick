@@ -79,7 +79,7 @@ namespace ClassLibrary.Models
 
         }
 
-        public void AddCollection(List<SymbolTableItemModel> newList)
+        public void AddCollection(IList<SymbolTableItemModel> newList)
         {
             foreach (var item in newList)
             {

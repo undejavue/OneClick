@@ -52,30 +52,30 @@ namespace ClassLibrary.Excel
         {
             try
             {
-                using (var document = SpreadsheetDocument.Create(outputPath, SpreadsheetDocumentType.Workbook))
+                using (var workbook = SpreadsheetDocument.Create(outputPath, SpreadsheetDocumentType.Workbook))
                 {
-                    var workbookPart = document.AddWorkbookPart();
-                    workbookPart.Workbook = new Workbook();
-
-                    var worksheetPart = workbookPart.AddNewPart<WorksheetPart>();
-                    var sheetData = new SheetData();
-                    worksheetPart.Worksheet = new Worksheet(sheetData);
+                    var workbookPart = workbook.AddWorkbookPart();
+                    workbook.WorkbookPart.Workbook = new Workbook();
+                    workbook.WorkbookPart.Workbook.Sheets = new Sheets();
 
                     foreach (var category in categories)
                     {
-                        var sheets = workbookPart.Workbook.AppendChild(new Sheets());
-                        var sheet = new Sheet()
+                        var sheetPart = workbook.WorkbookPart.AddNewPart<WorksheetPart>();
+                        var sheetData = new SheetData();
+                        sheetPart.Worksheet = new Worksheet(sheetData);
+                        Sheets sheets = workbook.WorkbookPart.Workbook.GetFirstChild<Sheets>();
+                        string relationshipId = workbook.WorkbookPart.GetIdOfPart(sheetPart);
+
+                        uint sheetId = 1;
+                        if (sheets.Elements<Sheet>().Any())
                         {
-                            Id = workbookPart.GetIdOfPart(worksheetPart),
-                            SheetId = 1,
-                            Name = category.Name
-                        };
+                            sheetId = sheets.Elements<Sheet>().Select(s => s.SheetId.Value).Max() + 1;
+                        }
 
+                        Sheet sheet = new Sheet { Id = relationshipId, SheetId = sheetId, Name = category.Name };
                         sheets.Append(sheet);
-                        var array = category.GetSymbolsArrayEx();
 
-                        int columnsCount = array.GetLength(0);
-                        int rowsCount = array.GetLength(1);
+                        var array = category.GetSymbolsArrayEx();
 
                         for (int i = 0; i < array.GetLength(0); i++)
                         {

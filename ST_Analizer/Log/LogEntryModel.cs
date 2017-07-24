@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows;
 using OneClickUI.Helpers;
 
@@ -41,12 +42,18 @@ namespace OneClickUI.Log
             set { SetProperty(ref _time, value); }
         }
 
-
         private string _entry;
         public string Entry
         {
             get { return _entry; }
             set { SetProperty(ref _entry, value); }
+        }
+
+        private Color _entryColor = Color.WhiteSmoke;
+        public Color EntryColor
+        {
+            get { return _entryColor; }
+            set { SetProperty(ref _entryColor, value); }
         }
 
 
@@ -58,6 +65,25 @@ namespace OneClickUI.Log
             Time = DateTime.Now.ToString("hh:mm:ss");
             Entry = Time + ": " + Message;
             Progress = 0;
+
+            switch (tag)
+            {
+                case LogTag.Error:
+                    EntryColor = Color.DarkRed;
+                    break;
+                case LogTag.Info:
+                    EntryColor = Color.WhiteSmoke;
+                    break;
+                case LogTag.Debug:
+                    EntryColor = Color.DeepSkyBlue;
+                    break;
+                case LogTag.Warning:
+                    EntryColor = Color.OrangeRed;
+                    break;
+                default:
+                    EntryColor = Color.WhiteSmoke;
+                    break;
+            }
         }
 
     }
