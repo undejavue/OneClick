@@ -90,8 +90,7 @@
                          VerticalAlignment="Stretch" Height="Auto" 
                          VerticalContentAlignment="Center" />
 
-                <Button Grid.Row="1" Grid.Column="1" Content="Открыть файл" x:Name="BtnExcelOpen" Margin="8"
-                        Click="BtnExcelOpenClick"                   
+                <Button Grid.Row="1" Grid.Column="1" Content="Открыть файл" x:Name="BtnExcelOpen" Margin="8"          
                         VerticalAlignment="Bottom"  
                         ToolTip="Файл конфигурации в формате Excel" 
                         Command="{Binding FileSelectCommand}"
@@ -152,7 +151,7 @@
                 <Button Grid.Row="0" Grid.Column="1" 
                         Content="Создать БД" 
                         Name="BtnDBcreate" 
-                        Click="BtnDBcreateClick" 
+                        Command="{Binding CreateDbCommand}"
                         Margin="8"/>
 
                 <Label Grid.Row="1" Grid.Column="0" Content="Открыть БД из файла" 
@@ -160,7 +159,8 @@
 
                 <Button Grid.Row="1" Grid.Column="1" Margin="8"
                         Content="Открыть БД" Name="BtnDBopen" 
-                        VerticalAlignment="Bottom" Click="BtnDBopenClick" />
+                        VerticalAlignment="Bottom" 
+                        Command="{Binding OpenDbCommand}"/>
                 <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
                     <Border  
                         HorizontalAlignment="Stretch" 
@@ -202,7 +202,7 @@
                             <!--<TextBlock Text="{Binding Path=Tag}" Width="64" Foreground="#FF5579C7" FontWeight="Bold" FontSize="12"/>-->
                             <TextBlock Text="{Binding Path=Entry}"                                    
                                        Foreground="{StaticResource LightForegroundBrush}"
-                                       TextWrapping="Wrap" FontSize="11"/>
+                                       TextWrapping="Wrap" FontSize="12"/>
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>

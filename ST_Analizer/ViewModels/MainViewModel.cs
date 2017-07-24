@@ -73,6 +73,9 @@ namespace OneClickUI.ViewModels
             }
         }
 
+        public ICommand CreateDbCommand { get; set; }
+        public ICommand OpenDbCommand { get; set; }
+
         private static readonly object SyncLock = new object();
 
         public MainViewModel()
@@ -103,6 +106,9 @@ namespace OneClickUI.ViewModels
                 ConsoleWrite("Задан файл конфигурации...");
             });
 
+            CreateDbCommand = new RelayCommand(async obj => await ExecuteCreateDbCommand());
+            OpenDbCommand = new RelayCommand(async obj => await ExecuteOpenDbCommand());
+
             FilterLogCommand = new RelayCommand(ExecuteFilterLogCommand);
             InitFilter();
             RootDirectory = Environment.CurrentDirectory;
@@ -111,6 +117,21 @@ namespace OneClickUI.ViewModels
 
             ConsoleWrite("Initialized...");
             BindingOperations.EnableCollectionSynchronization(LogItems, SyncLock);
+        }
+
+        private async Task ExecuteOpenDbCommand()
+        {
+            throw new NotImplementedException();
+        }
+
+        private async Task ExecuteCreateDbCommand()
+        {
+            if (Categories != null)
+            {
+                var frameView = new MainFramesView(Categories);
+                ConsoleWrite("База данных создана");
+                frameView.Show();
+            }
         }
 
         private async Task SetCategories()
