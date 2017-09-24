@@ -57,7 +57,7 @@ namespace ClassLibrary.SourceGenerator
         /// </summary>
         public async Task PrintAllSourcesToFiles(string dir, CancellationToken token)
         {
-            Rootdir = dir + "\\";
+            Rootdir = dir + "\\sources\\";
             var filename = Rootdir;
 
             await Task.Run(() =>
@@ -281,8 +281,9 @@ namespace ClassLibrary.SourceGenerator
                     // 11Y
                     if (el.DbArrayName.Equals("PID"))
                     {
-                        db.SymbolName = "PID" + el.Codename;
-                        db.Title = el.SignalComment;
+                        continue; // WARNING: no PIDS in the DB list !!!
+                        //db.SymbolName = "PID" + el.Codename;
+                       // db.Title = el.SignalComment;
                     }
                     else
                     {
@@ -344,8 +345,8 @@ namespace ClassLibrary.SourceGenerator
             list.Add("AUTHOR:  Kratovi4");
             list.Add("VERSION : 2.0");
             list.Add("STRUCT");
-            list.Add(db.ArrayName + ": ARRAY  [1 .. " + db.ArrayIndex + "] OF //Array");
-            list.Add("\"" + db.UdtName + "\";");
+            list.Add(db.ArrayName + ": ARRAY  [1 .. " + db.ArrayIndex + "] OF ");
+            list.Add("\"" + db.UdtName + "\"; // Array");
             list.Add("END_STRUCT ;");
             list.Add("BEGIN");
             list.Add("END_DATA_BLOCK");

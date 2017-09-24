@@ -59,38 +59,16 @@ namespace ClassLibrary.Excel
                     workbook.WorkbookPart.Workbook.Sheets = new Sheets();
 
                     foreach (var category in categories)
-                    {
-                        var sheetPart = workbook.WorkbookPart.AddNewPart<WorksheetPart>();
-                        var sheetData = new SheetData();
-                        sheetPart.Worksheet = new Worksheet(sheetData);
-                        Sheets sheets = workbook.WorkbookPart.Workbook.GetFirstChild<Sheets>();
-                        string relationshipId = workbook.WorkbookPart.GetIdOfPart(sheetPart);
+                    {   
+                        var array = category.GetSymbolsArrayDistinct();
+                        var duplicates = category.GetSymbolsDuplicates();
 
-                        uint sheetId = 1;
-                        if (sheets.Elements<Sheet>().Any())
+                        WriteSheet(array, workbook, category.Name);
+                        if (duplicates.Length > 0)
                         {
-                            sheetId = sheets.Elements<Sheet>().Select(s => s.SheetId.Value).Max() + 1;
-                        }
-
-                        Sheet sheet = new Sheet { Id = relationshipId, SheetId = sheetId, Name = category.Name };
-                        sheets.Append(sheet);
-
-                        var array = category.GetSymbolsArrayEx();
-
-                        for (int i = 0; i < array.GetLength(0); i++)
-                        {
-                            var newRow = new Row();
-                            for (int j = 0; j < array.GetLength(1); j++)
-                            {
-                                var cell = new Cell();
-                                cell.DataType = CellValues.String;
-                                cell.CellValue = new CellValue(array[i, j]);
-                                newRow.AppendChild(cell);
-                            }
-                            sheetData.AppendChild(newRow);
+                            WriteSheet(duplicates, workbook, category.Name + "_duplicates");
                         }
                     }
-
                     workbookPart.Workbook.Save();
                 }
                 return true;
@@ -101,6 +79,40 @@ namespace ClassLibrary.Excel
                 return false;
             }
         }
+
+        private static void WriteSheet(string [,] array, SpreadsheetDocument workbook, string sheetName)
+        {
+
+                var sheetPart = workbook.WorkbookPart.AddNewPart<WorksheetPart>();
+                var sheetData = new SheetData();
+                sheetPart.Worksheet = new Worksheet(sheetData);
+                Sheets sheets = workbook.WorkbookPart.Workbook.GetFirstChild<Sheets>();
+                string relationshipId = workbook.WorkbookPart.GetIdOfPart(sheetPart);
+
+
+                uint sheetId = 1;
+                if (sheets.Elements<Sheet>().Any())
+                {
+                    sheetId = sheets.Elements<Sheet>().Select(s => s.SheetId.Value).Max() + 1;
+                }
+
+                Sheet sheet = new Sheet { Id = relationshipId, SheetId = sheetId, Name = sheetName };
+                sheets.Append(sheet);
+
+
+                for (int i = 0; i < array.GetLength(0); i++)
+                {
+                    var newRow = new Row();
+                    for (int j = 0; j < array.GetLength(1); j++)
+                    {
+                        var cell = new Cell();
+                        cell.DataType = CellValues.String;
+                        cell.CellValue = new CellValue(array[i, j]);
+                        newRow.AppendChild(cell);
+                    }
+                    sheetData.AppendChild(newRow);
+                }
+         }
 
         public static bool WriteExcelFromArray(string outputPath, string[,] array, string sheetName, CancellationToken token)
         {

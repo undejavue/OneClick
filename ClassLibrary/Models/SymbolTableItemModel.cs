@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
@@ -75,6 +76,12 @@ namespace ClassLibrary.Models
             }
         }
 
+        public string CodenameEx
+        {
+            get { return _systemNumber + _deviceType + _deviceNumber; }
+        }
+
+
         /// <summary>
         /// SignalType mean IW, QW, I, Q
         /// </summary>
@@ -127,6 +134,19 @@ namespace ClassLibrary.Models
             set
             {
                 _deviceNumber = value;
+
+                if (value.Length < 2)
+                {
+                    int n;
+                    if (int.TryParse(value, out n))
+                    {
+                        if (n > 0 && n < 10)
+                        {
+                            _deviceNumber = '0' + value;
+                        }
+                    }
+                }
+
                 OnPropertyChanged(new PropertyChangedEventArgs("DeviceNumber"));
             }
         }
@@ -241,6 +261,31 @@ namespace ClassLibrary.Models
             row.Add(this.DeviceNumber);
             row.Add(this.Etc);
             row.Add(this.DeviceTag);
+
+            return row;
+        }
+
+        public List<string> GetItemInOneRowEx()
+        {
+            // IW_02A02TI	PIW340	WORD	Температура в СИ 1-02	DB21.SNS[	2	].Input	02A02TI
+            // IW_11A01FC	IW334	11A01FC	Расход 11A01FC: Расходомер после теплообменника линии R1	IW	11	A	01	FC	Input
+
+            var row = new List<string>();
+            row.Add(this.SignalName);
+            row.Add(this.SignalAdress);
+            row.Add(this.SignalDataType);
+            row.Add(this.SignalComment);
+
+            // DB21.SNS[
+            row.Add($"{this.DbFullName}.{this.DbArrayName}[");
+            // 2 
+            row.Add(this.DeviceNumber);
+            //].Input
+
+            row.Add($"].{this.DeviceTag}");
+            row.Add(this.Codename.Replace("UF","M").Replace("U", "M"));
+            row.Add(this.CodenameEx);
+
 
             return row;
         }

@@ -64,6 +64,7 @@ namespace ClassLibrary.Models
 
         public CategoryModel(int initId, string initName, string initDescription)
         {
+            Id = initId;
             Name = initName;
             Description = initDescription;
             SelectedKey = null;
@@ -125,11 +126,91 @@ namespace ClassLibrary.Models
             return arr;
         }
 
-        public bool IsEmpty()
+    public string[,] GetSymbolsArrayDistinct()
+    {
+        var list = new List<string>();
+        var distinct = S7Items.Distinct(new ItemEqualityComparer()).ToList();
+
+        if (distinct.Count > 0)
         {
-            var isEmpty = !(S7Items.Count > 0);
-            return isEmpty;
+            list = distinct[0].GetItemInOneRowEx();
         }
 
+        var arr = new string[distinct.Count, list.Count];
+        int i = 0;
+
+        foreach (var el in distinct)
+        {
+            list = el.GetItemInOneRowEx();
+            int j = 0;
+
+            foreach (string s in list)
+            {
+                arr[i, j] = s;
+                j++;
+            }
+            i++;
+        }
+
+        return arr;
     }
+
+        public string[,] GetSymbolsDuplicates()
+        {
+            var list = new List<string>();
+            var distinct = S7Items.Distinct(new ItemEqualityComparer()).ToList();
+            var duplicates = S7Items
+                .GroupBy(c => c.CodenameEx)
+                .Where(g => g.Skip(1).Any())
+                .SelectMany(c => c)
+                .ToList();
+
+
+            if (duplicates.Count > 0)
+            {
+                list = duplicates[0].GetItemInOneRowEx();
+            }
+
+
+            var arr = new string[duplicates.Count, list.Count];
+            int i = 0;
+
+            foreach (var el in duplicates)
+            {
+                list = el.GetItemInOneRowEx();
+                int j = 0;
+
+                foreach (string s in list)
+                {
+                    arr[i, j] = s;
+                    j++;
+                }
+                i++;
+            }
+            return arr;
+        }
+
+        public bool IsEmpty()
+    {
+        var isEmpty = !(S7Items.Count > 0);
+        return isEmpty;
+    }
+
+}
+
+    internal class ItemEqualityComparer : IEqualityComparer<SymbolTableItemModel>
+    {
+
+        public bool Equals(SymbolTableItemModel x, SymbolTableItemModel y)
+        {
+            return x.CodenameEx == y.CodenameEx;
+        }
+
+
+        public int GetHashCode(SymbolTableItemModel obj)
+        {
+            return obj.CodenameEx.GetHashCode();
+        }
+    }
+
 }

@@ -72,6 +72,7 @@ namespace OneClickUI.ViewModels
                     (_cancelCommand = new RelayCommand(obj => tokenSource?.Cancel()));
             }
         }
+        public ICommand XmlFilesProcessingCommand { get; set; }
 
         public ICommand CreateDbCommand { get; set; }
         public ICommand OpenDbCommand { get; set; }
@@ -111,12 +112,15 @@ namespace OneClickUI.ViewModels
 
             FilterLogCommand = new RelayCommand(ExecuteFilterLogCommand);
             InitFilter();
-            RootDirectory = Environment.CurrentDirectory;
+            RootDirectory = @"s:\Simatek\OneClick\"; //Environment.CurrentDirectory;
             tokenSource = new CancellationTokenSource();
             token = tokenSource.Token;
 
             ConsoleWrite("Initialized...");
             BindingOperations.EnableCollectionSynchronization(LogItems, SyncLock);
+
+            XmlFilesProcessingCommand = new RelayCommand(
+                async obj => await ExecuteXmlFilesProcessingCommand());
         }
 
         private async Task ExecuteOpenDbCommand()
@@ -197,7 +201,7 @@ namespace OneClickUI.ViewModels
             {
                 ConsoleWrite("Ошибка открытия файла", LogTag.Error);
                 return;
-            }              
+            }
 
             IsBusy = true;
             ProgressLabel = "Выполняется...";
@@ -252,7 +256,7 @@ namespace OneClickUI.ViewModels
                 bool isOk = ExcelDataWriter.WriteExcelFromArray(dest, SymbolTable.GetSymbolsArray(), "SymbolTable", token);
                 Progress = 100;
                 var s = isOk ? "Адаптированная таблица сохранена" : "Ошибка записи файла";
-                lock (SyncLock){ ConsoleWrite(s); }
+                lock (SyncLock) { ConsoleWrite(s); }
 
             }, token).ConfigureAwait(false);
 
@@ -327,7 +331,7 @@ namespace OneClickUI.ViewModels
                     ConsoleWrite("Выполнена сортировка таблицы по ключам и категориям");
                 }
 
-                var resultFile = Path.Combine(RootDirectory, "result.xls");
+                var resultFile = Path.Combine(RootDirectory, "result.xlsx");
                 bool isOk = ExcelDataWriter.WriteExcel(resultFile, Categories);
 
                 var message = isOk ? "Выполнена выгрузка категорий в Excel" : "Ошибка записи файла";
@@ -336,7 +340,7 @@ namespace OneClickUI.ViewModels
                     ConsoleWrite(message);
                 }
 
-                resultFile = Path.Combine(RootDirectory, "result_unsorted.xls");
+                resultFile = Path.Combine(RootDirectory, "result_unsorted.xlsx");
                 isOk = ExcelDataWriter.WriteExcelFromArray(resultFile, SymbolTable.GetSymbolsArray(), "unsorted", token);
 
             }, token).ConfigureAwait(false);
@@ -357,7 +361,7 @@ namespace OneClickUI.ViewModels
 
             ConsoleWrite("Выгрузка листа блоков данных...");
 
-            var resultFile = Path.Combine(RootDirectory, "sources.xls");
+            var resultFile = Path.Combine(RootDirectory, "sources.xlsx");
             await Task.Run(() =>
             {
                 ExcelDataWriter.WriteExcelFromArray(resultFile, sources.PrintDBlistToArray(), "DB_list", token);
@@ -366,6 +370,7 @@ namespace OneClickUI.ViewModels
             Progress = 40;
             ConsoleWrite("Старт генерации source-файлов...");
             await sources.SetPeripheryFields(token);
+            await sources.PrintAllSourcesToFiles(RootDirectory, token);
 
             Progress = 90;
             ConsoleWrite("Генерация source-файлов завершена");
@@ -376,5 +381,28 @@ namespace OneClickUI.ViewModels
             IsBusy = false;
             ConsoleWrite("Выполнено! Генерация завершена, основная структура сигналов обновлена");
         }
+
+        private async Task ExecuteXmlFilesProcessingCommand()
+        {
+            IsBusy = true;
+            tokenSource = new CancellationTokenSource();
+            token = tokenSource.Token;
+
+            ConsoleWrite("Обработка Xml файлов...");
+
+            var resultFile = Path.Combine(RootDirectory, "sources.xlsx");
+            await Task.Run(() =>
+            {
+                var path = @"c:\Temp\7965_v0.ap14\Program blocks\";
+                XmlProcessor.ProcessXml(path);
+
+            }, token).ConfigureAwait(false);
+
+            Progress = 0;
+            IsBusy = false;
+            ConsoleWrite("Выполнено! Обработка xml файлов завершена");
+        }
     }
+
+
 }

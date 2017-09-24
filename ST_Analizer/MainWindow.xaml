@@ -177,6 +177,9 @@
                     </Border>
                 </StackPanel>
             </Grid>
+            <Button Grid.Row="2" Content="Xml files process" Margin="91,0,83,20"
+                x:Name="BtnProcessXml"  VerticalAlignment="Bottom"  
+                Command="{Binding XmlFilesProcessingCommand}" Grid.Column="1" />
         </Grid>
 
         <Grid  Margin="8,0" DockPanel.Dock="Top"
@@ -212,7 +215,7 @@
                     </Style>
                 </ListBox.ItemContainerStyle>
             </ListBox>
-            
+
             <Button Grid.Row="0" Grid.Column="1" Content="Отмена" 
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center" 
@@ -251,6 +254,6 @@
                                TextAlignment="Right" />
             </StatusBarItem>-->
         </StatusBar>
-   
+
     </DockPanel>
 </Window>

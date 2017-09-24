@@ -220,7 +220,7 @@ namespace ClassLibrary.Models
                 // Если все еще не нашлось совпадений, то проанализировать комментарий
                 if (string.IsNullOrEmpty(signal.DeviceTag))
                 {
-                    signal.DeviceTag = SetTagByComment(signal.SignalComment);
+                    signal.DeviceTag = SetTagByComment(signal.SignalComment.ToLower());
                 }
 
                 try
@@ -251,7 +251,7 @@ namespace ClassLibrary.Models
                 if (etc.Contains("ON") | etc.Contains("OFF") | etc.Contains("RUN") | etc.Contains("FS")) op = "I_on";
                 if (etc.Contains("LL") | etc.Contains("LH") | etc.Contains("LM")) op = "Input";
                 if (etc.Contains("COUNT") | etc.Equals("FC") | etc.Contains("FC") | etc.Contains("FI")) op = "Pulse";
-                if (etc.Contains("QF")) op = "QF";
+                if (etc.Contains("QF") | etc.Contains("KM")) op = "QF";
             }
 
             if (type != null) 
@@ -300,11 +300,10 @@ namespace ClassLibrary.Models
             string op = "";
 
             if (comment.Contains("уровень")) op = "Input";
-            if (comment.Contains("Управление")) op = "Ctr";
-            if (comment.Contains("Режим \"Ход\"") | comment.Contains("Датчик") | comment.Contains("Соединение") | comment.Contains("включен")) op = "I_on";
-            if (comment.Contains("cост. пускателя")) op = "QF";
-            if (comment.Contains("четчик") ) op = "Pulse";
-
+            if (comment.Contains("управление")) op = "Ctr";
+            if (comment.Contains("режим \"Ход\"") | comment.Contains("датчик") | comment.Contains("соединение") | comment.Contains("включен")) op = "I_on";
+            if (comment.Contains("cост. пускателя") | comment.Contains("состояние пускателя")) op = "QF";
+            if (comment.Contains("счетчик") ) op = "Pulse";
             return op;
         }
         
@@ -348,8 +347,8 @@ namespace ClassLibrary.Models
 
         private static bool IsItemMatchKey(SymbolTableItemModel item, string key)
         {
-            if (item.SignalType.Equals(key)) return true;
-            if (item.SignalComment.Contains(key)) return true;
+            if (item.SignalType.ToLower().Equals(key.ToLower())) return true;
+            if (item.SignalComment.ToLower().Contains(key.ToLower())) return true;
 
             return false;
         }

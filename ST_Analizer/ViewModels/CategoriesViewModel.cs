@@ -93,6 +93,7 @@ namespace OneClickUI.ViewModels
             else
             {
                 Categories.ReplaceRange(defaultList);
+
             }
         }
     }
